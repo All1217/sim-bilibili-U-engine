@@ -6,10 +6,20 @@
 
 
 from flask import Flask, jsonify, request
+from apscheduler.schedulers.background import BackgroundScheduler
 from src.algorithm.recommender import getRecommendations
 
 app = Flask(__name__)
 
+# 示例定时任务逻辑
+def scheduled_job():
+    print("Running scheduled job...")
+    # 你可以在这里执行任何逻辑，例如预加载推荐数据、清理缓存等
+
+# 初始化 APScheduler
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=scheduled_job, trigger="interval", seconds=60)  # 每60秒执行一次
+scheduler.start()
 
 @app.route('/recommendations/<int:user_id>', methods=['GET'])
 def recommend(user_id):
