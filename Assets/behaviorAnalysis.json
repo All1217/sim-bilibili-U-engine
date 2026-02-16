@@ -1,0 +1,57 @@
+{
+  "analyze_time": "2026-02-15 10:28:48",
+  "danmaku_distribution": {
+    "total_users": 26,
+    "min": 1,
+    "max": 44,
+    "mean": 26.81,
+    "median": 30.0,
+    "percentile_90": 39.0,
+    "percentile_75": 35.0,
+    "percentile_25": 24.5
+  },
+  "interval_distribution": [
+    {
+      "interval": "0-5条",
+      "user_count": 5,
+      "percentage": 19.2
+    },
+    {
+      "interval": "6-20条",
+      "user_count": 0,
+      "percentage": 0.0
+    },
+    {
+      "interval": "21-50条",
+      "user_count": 21,
+      "percentage": 80.8
+    },
+    {
+      "interval": "51-100条",
+      "user_count": 0,
+      "percentage": 0.0
+    },
+    {
+      "interval": "101-500条",
+      "user_count": 0,
+      "percentage": 0.0
+    },
+    {
+      "interval": "501-1000条",
+      "user_count": 0,
+      "percentage": 0.0
+    },
+    {
+      "interval": "1000条以上",
+      "user_count": 0,
+      "percentage": 0.0
+    }
+  ],
+  "night_owl_analysis": {
+    "qualified_users": 21,
+    "night_owl_users": 6,
+    "night_owl_percentage": 28.6,
+    "avg_night_ratio": 0.25,
+    "median_night_ratio": 0.25
+  }
+}

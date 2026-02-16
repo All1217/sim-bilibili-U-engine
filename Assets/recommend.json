@@ -1,0 +1,6 @@
+{
+  "active_threshold": 35,
+  "passive_threshold": 19.2,
+  "night_ratio_threshold": 28.6,
+  "night_min_samples": 10
+}

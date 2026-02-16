@@ -5,17 +5,16 @@
 # @Project : recommendation-algorithm
 
 import pandas as pd
-import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-from src.util.database import connect
+from src.util.database import connectMySql
 import src.config.application as config
 
 
 def getUserdata():
     """
-    从 user_video 表中获取用户与视频的交互行为数据
+    从 user_video 表中获取用户与视频的交互行为原始数据，接下来将对数据进行分析
     """
-    conn = connect()
+    conn = connectMySql()
     query = """
     SELECT uid, vid, 
            play AS play_score, 
@@ -53,7 +52,7 @@ def calSimilarity(matrix):
     :param matrix: 用户-视频评分矩阵
     :return: 用户相似度矩阵
     """
-    similarity_matrix = cosine_similarity(matrix)
+    similarity_matrix = cosine_similarity(matrix) # 调用余弦相似度函数
     similarity_df = pd.DataFrame(similarity_matrix, index=matrix.index, columns=matrix.index)
     return similarity_df
 
@@ -86,8 +85,11 @@ def recommend(user_id, matrix, similarity, top_n=5):
     # 对推荐视频进行评分排序
     video_scores = {}
     for video_id in recommended_videos:
+        # 循环体累加求和，算出来的score就是每件物品的p
         score = 0
         for sim_user, sim_score in zip(similar_users, similar_users_scores):
+            # matrix.at[sim_user, video_id]: r
+            # sim_score: w
             score += matrix.at[sim_user, video_id] * sim_score
         video_scores[video_id] = score
 

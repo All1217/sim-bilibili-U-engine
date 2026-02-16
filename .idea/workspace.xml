@@ -4,9 +4,41 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b0d85de-7887-4373-ac9b-cbc008e912e5" name="Changes" comment="2025/2/21 ver1.0">
+    <list default="true" id="7b0d85de-7887-4373-ac9b-cbc008e912e5" name="Changes" comment="2025/5/27 ver1.0">
+      <change afterPath="$PROJECT_DIR$/Assets/behaviorAnalysis.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/recommend.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/stopwords.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/tags.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/trash/behaviorTag.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/trash/interestTag.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/trash/qualityTag.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/trash/这个文件夹主要存储废案.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/printStructure.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/algorithm/behaviorAnalyzer.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/algorithm/behaviorTag.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/algorithm/danmuScore.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/algorithm/filterUserIdsByTags.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/algorithm/interestTag.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/algorithm/qualityTag.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/algorithm/similarUser.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/redisConstants.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/util/jsonHandler.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/util/profile_builder.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/util/spider.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/util/stopwords.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/util/word_segmentation.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/test.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/testRedis.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/testScanDanmu.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/algorithm/recommender.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/recommender.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/config/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/application.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/util/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/util/database.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,14 +77,30 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python.behaviorAnalyzer.executor": "Run",
+    "Python.behaviorTag.executor": "Run",
+    "Python.danmuScore.executor": "Run",
+    "Python.database.executor": "Run",
+    "Python.filterUserIdsByTags.executor": "Run",
+    "Python.interestTag.executor": "Run",
+    "Python.jsonHandler.executor": "Run",
     "Python.main (1).executor": "Run",
     "Python.main.executor": "Run",
+    "Python.printStructure (1).executor": "Run",
+    "Python.print_project_structure (1).executor": "Run",
+    "Python.print_project_structure.executor": "Run",
+    "Python.qualityTag.executor": "Run",
+    "Python.similarUser.executor": "Run",
+    "Python.stopwords.executor": "Run",
     "Python.test.executor": "Run",
+    "Python.testRedis.executor": "Run",
+    "Python.testScanDanmu.executor": "Run",
+    "Python.word_segmentation.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "E:/Program files/python-projects/MediaCrawler-main",
+    "last_opened_file_path": "E:/Program files/python-projects/recommendation-algorithm/Assets/trash",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
     "vue.rearranger.settings.migration": "true"
@@ -60,14 +108,39 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\Program files\python-projects\recommendation-algorithm\Assets\trash" />
       <recent name="E:\Program files\python-projects\recommendation-algorithm\src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Program files\python-projects\recommendation-algorithm\src\util" />
+      <recent name="E:\Program files\python-projects\recommendation-algorithm" />
       <recent name="E:\Program files\python-projects\recommendation-algorithm\src" />
       <recent name="E:\Program files\python-projects\recommendation-algorithm\src\algorithm-module" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test">
+  <component name="RunManager" selected="Python.main (1)">
+    <configuration name="interestTag" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="recommendation-algorithm" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/algorithm" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/algorithm/interestTag.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="main (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="recommendation-algorithm" />
       <option name="ENV_FILES" value="" />
@@ -81,7 +154,6 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -114,7 +186,29 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="printStructure (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="recommendation-algorithm" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/printStructure.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="printStructure" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="recommendation-algorithm" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -127,7 +221,51 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test/test.py" />
+      <option name="SCRIPT_NAME" value="E:\Program files\python-projects\recommendation-algorithm\printStructure.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="printStructure" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="recommendation-algorithm" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="E:\Program files\python-projects\recommendation-algorithm\printStructure.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="qualityTag" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="recommendation-algorithm" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/algorithm" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/algorithm/qualityTag.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -138,8 +276,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.test" />
         <item itemvalue="Python.main (1)" />
+        <item itemvalue="Python.qualityTag" />
+        <item itemvalue="Python.printStructure (1)" />
+        <item itemvalue="Python.interestTag" />
+        <item itemvalue="Python.printStructure" />
       </list>
     </recent_temporary>
   </component>
@@ -168,7 +309,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740109700155</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="2025/5/27 ver1.0">
+      <option name="closed" value="true" />
+      <created>1746581035215</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1746581035215</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -184,6 +333,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="2025/2/21 ver1.0" />
-    <option name="LAST_COMMIT_MESSAGE" value="2025/2/21 ver1.0" />
+    <MESSAGE value="2025/5/27 ver1.0" />
+    <option name="LAST_COMMIT_MESSAGE" value="2025/5/27 ver1.0" />
   </component>
 </project>
