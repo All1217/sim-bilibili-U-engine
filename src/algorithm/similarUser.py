@@ -155,7 +155,7 @@ def startSimilar(vid, target_uid, limit=5):
 
 # ==================== 测试代码 ====================
 if __name__ == "__main__":
-    test_vid = 3
+    test_vid = 35
     test_uid = 123123123
 
     print(f"正在查找与用户 {test_uid} 相似的用户（视频 {test_vid}）...")

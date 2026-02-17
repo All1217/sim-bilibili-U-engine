@@ -10,7 +10,7 @@ from src.algorithm.recommender import getRecommendations
 from src.util.spider import Spider
 from src.util.database import connectRedis
 from src.util.profileBuilder import build_user_profile, batch_build_profiles
-from src.util.rabbitmq import start_rabbitmq_listener, stop_rabbitmq_listener, get_rabbitmq_listener
+from src.util.rabbitmq import startRabbitmq, stopRabbitmq, getRabbitmqListener
 import threading
 import src.config.application as config
 import time
@@ -52,14 +52,14 @@ scheduler.start()
 print("✅ 定时任务调度器已启动")
 
 # 初始化rabbitmq监听器
-rabbitmq_listener = start_rabbitmq_listener()
+rabbitmq_listener = startRabbitmq()
 
 
 @atexit.register
 def shutdown():
     """应用关闭时清理资源"""
     print("\n🔄 正在关闭应用...")
-    stop_rabbitmq_listener()
+    stopRabbitmq()
     scheduler.shutdown()
     print("✅ 应用已关闭")
 

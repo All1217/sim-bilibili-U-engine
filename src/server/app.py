@@ -9,8 +9,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from src.algorithm.recommender import getRecommendations
 from src.util.spider import Spider
 from src.util.database import connectRedis
-from src.util.profileBuilder import build_user_profile, batch_build_profiles
-from src.util.rabbitmq import start_rabbitmq_listener, stop_rabbitmq_listener, get_rabbitmq_listener
+from src.util.profileBuilder import build_user_profile
+from src.util.rabbitmq import startRabbitmq, stopRabbitmq
 from src.algorithm.similarUser import startSimilar
 import threading
 import src.config.application as config
@@ -53,14 +53,14 @@ scheduler.start()
 print("✅ 定时任务调度器已启动")
 
 # 初始化rabbitmq监听器
-rabbitmq_listener = start_rabbitmq_listener()
+rabbitmqListener = startRabbitmq()
 
 
 @atexit.register
 def shutdown():
     """应用关闭时清理资源"""
     print("\n🔄 正在关闭应用...")
-    stop_rabbitmq_listener()
+    stopRabbitmq()
     scheduler.shutdown()
     print("✅ 应用已关闭")
 
@@ -137,17 +137,3 @@ def findSimilar(video_id, user_id):
     except Exception as e:
         print(f"❌ 查找相似用户失败: {e}")
         return jsonify([])
-
-@app.route('/filterUser', methods=['POST'])
-def filterUser():
-    """
-    JSON Body方式
-    请求体: {"video_id": 123, "user_id": 456, "limit": 10}
-    """
-    data = request.get_json()
-    video_id = data.get('video_id')
-    user_id = data.get('user_id')
-    limit = data.get('limit', 10)
-    if not video_id or not user_id:
-        return jsonify({'code': 400, 'message': '缺少必要参数'}), 400
-    return jsonify(result)

@@ -108,22 +108,22 @@ def getRecommendations(user_id, n):
     """
     # 1. 加载用户行为数据
     data = getUserdata()
-    print("recommender.py:getUserdata()")
-    print(data)
-    print()
+    # print("recommender.py:getUserdata()")
+    # print(data)
+    # print()
     # 2. 构建用户-视频评分矩阵
     matrix = buildMatrix(data)
-    print("recommender.py:buildMatrix(data)")
-    print(matrix)
-    print()
+    # print("recommender.py:buildMatrix(data)")
+    # print(matrix)
+    # print()
     # 3. 计算用户相似度矩阵
     similarity = calSimilarity(matrix)
-    print("recommender.py:calSimilarity(matrix)")
-    print(similarity)
-    print()
+    # print("recommender.py:calSimilarity(matrix)")
+    # print(similarity)
+    # print()
     # 4. 推荐视频
     videoList = recommend(user_id, matrix, similarity, n)
-    print("recommender.py:recommend(user_id, matrix, similarity, n)")
-    print(videoList)
-    print()
+    # print("recommender.py:recommend(user_id, matrix, similarity, n)")
+    # print(videoList)
+    # print()
     return videoList

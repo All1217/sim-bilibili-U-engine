@@ -41,13 +41,10 @@ class UserProfileBuilder:
             }
         """
         start_time = time.time()
-
         # 提交三个任务到线程池
         future_interest = self.executor.submit(self._run_interest_module, uid, save_to_db)
         future_behavior = self.executor.submit(self._run_behavior_module, uid, save_to_db)
         future_quality = self.executor.submit(self._run_quality_module, uid, save_to_db)
-
-        # 收集结果
         results = {
             'uid': uid,
             'interest_tags': None,
@@ -56,7 +53,6 @@ class UserProfileBuilder:
             'success': False,
             'execution_time': 0
         }
-
         # 等待所有任务完成
         try:
             results['interest_tags'] = future_interest.result(timeout=300)  # 5分钟超时
