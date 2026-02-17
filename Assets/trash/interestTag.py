@@ -4,7 +4,7 @@
 # @File : semanticTag.py
 # @Project : recommendation-algorithm
 
-from src.util.word_segmentation import get_segmenter
+from src.util.wordHandler import get_segmenter
 from src.util.database import connectMySql
 from collections import defaultdict
 from src.util.jsonHandler import loadTags

@@ -11,7 +11,6 @@ from src.util.spider import Spider
 from src.util.database import connectRedis
 from src.util.profileBuilder import build_user_profile, batch_build_profiles
 from src.util.rabbitmq import start_rabbitmq_listener, stop_rabbitmq_listener, get_rabbitmq_listener
-from src.algorithm.similarUser import startSimilar
 import threading
 import src.config.application as config
 import time
@@ -76,10 +75,10 @@ def recommend(user_id):
     try:
         count = int(request.args.get('count', 3))
         recommendations = getRecommendations(user_id, count)
-        return jsonify(recommendations)
+        return jsonify({'code': 200, 'data': recommendations})
     except Exception as e:
         print(f"❌ 推荐接口错误 (用户{user_id}): {e}")
-        return jsonify([])
+        return jsonify({'code': 500, 'message': f'服务器错误: {str(e)}'})
 
 
 @app.route('/userProfile/<int:user_id>', methods=['GET'])
@@ -125,29 +124,26 @@ def buildUserProfileAsync(user_id):
         return jsonify({'code': 500, 'message': f'服务器错误: {str(e)}'})
 
 
-@app.route('/findSimilar/<int:video_id>/<int:user_id>', methods=['GET'])
-def findSimilar(video_id, user_id):
+@app.route('/userProfile/batch', methods=['POST'])
+def batchBuildProfiles():
     """
-    查找与当前用户相似的用户
-    请求示例: /findSimilar/123/456
+    批量构建用户画像
+    请求体: {"uids": [123, 456, 789], "max_workers": 3}
     """
     try:
-        uids = startSimilar(video_id, user_id, 5)
-        return jsonify(uids)
-    except Exception as e:
-        print(f"❌ 查找相似用户失败: {e}")
-        return jsonify([])
+        data = request.get_json()
+        if not data:
+            return jsonify({'code': 400, 'message': '请求体不能为空', 'data': None})
 
-@app.route('/filterUser', methods=['POST'])
-def filterUser():
-    """
-    JSON Body方式
-    请求体: {"video_id": 123, "user_id": 456, "limit": 10}
-    """
-    data = request.get_json()
-    video_id = data.get('video_id')
-    user_id = data.get('user_id')
-    limit = data.get('limit', 10)
-    if not video_id or not user_id:
-        return jsonify({'code': 400, 'message': '缺少必要参数'}), 400
-    return jsonify(result)
+        uids = data.get('uids', [])
+        max_workers = data.get('max_workers', 3)
+
+        if not uids:
+            return jsonify({'code': 400, 'message': '请提供用户ID列表', 'data': None})
+
+        max_workers = min(max_workers, 10)  # 限制最大并发数
+        result = batch_build_profiles(uids, save_to_db=True, max_workers=max_workers)
+        return jsonify({'code': 200, 'message': '批量构建完成', 'data': result})
+    except Exception as e:
+        print(f"❌ 批量构建错误: {e}")
+        return jsonify({'code': 500, 'message': f'服务器错误: {str(e)}', 'data': None})

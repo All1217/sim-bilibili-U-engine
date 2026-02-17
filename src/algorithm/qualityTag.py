@@ -1,12 +1,12 @@
 # _*_ coding : utf-8 _*_
-# @Time : 2026/2/15
+# @Time : 2026/2/16
 # @Author : Morton
-# @File : qualityTag.py (单用户精简版，移除点赞依赖)
+# @File : qualityTag.py (精简打印版)
 # @Project : recommendation-algorithm
 
 from src.util.database import connectMySql
 from src.algorithm.danmuScore import calDanmuScore, preprocess_danmaku_text
-from src.util.word_segmentation import get_segmenter
+from src.util.wordHandler import get_segmenter
 from src.algorithm.danmuScore import PROFESSIONAL_WORDS
 import numpy as np
 
@@ -27,24 +27,12 @@ THRESHOLDS = {
     "low_quality_threshold": 0.3,
     # 干货贡献者：专业词汇比例 ≥ 20%
     "professional_ratio_threshold": 0.2,
-    # 玩梗达人：弹幕中梗词比例 ≥ 30%
-    "meme_ratio_threshold": 0.3,
     # 稳定贡献者：至少发过20条弹幕
     "stable_contributor_min": 20,
     # 弹幕长度统计：长弹幕阈值（字符数）
     "long_danmaku_threshold": 20,
     # 短弹幕阈值
     "short_danmaku_threshold": 5
-}
-
-# ==================== 梗词库（可扩展） ====================
-MEME_WORDS = {
-    "2333", "hhhh", "草", "生草", "绝了", "离谱", "典", "典中典",
-    "蚌埠住了", "绷不住了", "破防了", "我超", "卧槽", "我靠",
-    "真香", "打脸", "翻车", "下车", "上车", "冲", "冲冲冲",
-    "yyds", "YYDS", "永远的神", "绝绝子", "无语子", "笑死",
-    "u1s1", "有一说一", "确实", "真实", "太真实了", "泪目",
-    "名场面", "高能", "预警", "前方高能", "空降", "打卡"
 }
 
 
@@ -77,8 +65,6 @@ def load_user_danmakus(uid):
 
     cursor.close()
     conn.close()
-
-    print(f"加载到用户 {uid} 的弹幕 {len(danmakus)} 条")
     return danmakus
 
 
@@ -156,8 +142,6 @@ def calculate_quality_stats(uid):
     if not danmakus:
         return [], {}
 
-    print(f"开始计算用户 {uid} 的弹幕质量...")
-
     # 2. 获取用户画像（用于评分）
     sender_profile = get_user_profile(uid)
 
@@ -198,10 +182,6 @@ def calculate_quality_stats(uid):
         if any(word in PROFESSIONAL_WORDS for word in words):
             stats['professional_count'] += 1
 
-        # 梗词判断
-        if any(meme in danmaku['text'] for meme in MEME_WORDS):
-            stats['meme_count'] += 1
-
         # 长度统计
         text_len = len(danmaku['text'])
         stats['total_length'] += text_len
@@ -210,11 +190,6 @@ def calculate_quality_stats(uid):
         elif text_len <= THRESHOLDS['short_danmaku_threshold']:
             stats['short_count'] += 1
 
-        # 进度提示（可选）
-        if (i + 1) % 50 == 0:
-            print(f"  已处理 {i + 1}/{len(danmakus)} 条弹幕...")
-
-    print(f"弹幕质量计算完成，平均分: {np.mean(scores):.2f}")
     return scores, stats
 
 
@@ -226,7 +201,6 @@ def get_quality_tags(uid):
     scores, stats = calculate_quality_stats(uid)
 
     if not scores:
-        print(f"用户 {uid} 没有弹幕数据")
         return {}
 
     tags = {}
@@ -244,10 +218,6 @@ def get_quality_tags(uid):
         professional_ratio = stats['professional_count'] / total
         if professional_ratio >= THRESHOLDS['professional_ratio_threshold']:
             tags['干货贡献者'] = round(professional_ratio, 2)
-
-        meme_ratio = stats['meme_count'] / total
-        if meme_ratio >= THRESHOLDS['meme_ratio_threshold']:
-            tags['玩梗达人'] = round(meme_ratio, 2)
 
     # ===== 3. 形式特征标签 =====
     if total > 0:
@@ -277,7 +247,6 @@ def save_user_tags(uid, tags_dict):
     将用户的质量标签保存到MySQL
     """
     if not tags_dict:
-        print(f"用户 {uid} 没有质量标签，跳过保存")
         return
 
     conn = getDBConn()
@@ -285,7 +254,7 @@ def save_user_tags(uid, tags_dict):
 
     # 定义质量标签列表（用于删除）
     quality_tags = [
-        "高质量弹幕贡献者", "低质量弹幕倾向", "干货贡献者", "玩梗达人",
+        "高质量弹幕贡献者", "低质量弹幕倾向", "干货贡献者",
         "长文弹幕偏好", "短平快弹幕", "稳定贡献者", "精品弹幕制造机"
     ]
     placeholders = ','.join(['%s'] * len(quality_tags))
@@ -305,8 +274,6 @@ def save_user_tags(uid, tags_dict):
     cursor.close()
     conn.close()
 
-    print(f"用户 {uid} 的质量标签已保存，共 {len(values)} 条")
-
 
 def build_user_quality_profile(uid, auto_save=True):
     """
@@ -319,22 +286,11 @@ def build_user_quality_profile(uid, auto_save=True):
     Returns:
         {tag_name: weight, ...}
     """
-    print("=" * 60)
-    print(f"🎯 开始构建用户 {uid} 的质量画像")
-    print("=" * 60)
-
     # 计算质量标签
     tags = get_quality_tags(uid)
 
     if not tags:
-        print(f"用户 {uid} 没有足够的质量特征")
         return {}
-
-    # 打印结果
-    print("\n【质量标签结果】")
-    sorted_tags = sorted(tags.items(), key=lambda x: x[1], reverse=True)
-    for tag, weight in sorted_tags:
-        print(f"  {tag}: {weight}")
 
     # 保存到数据库
     if auto_save:
@@ -349,5 +305,27 @@ def update_thresholds(new_thresholds):
     """
     global THRESHOLDS
     THRESHOLDS.update(new_thresholds)
-    print("阈值配置已更新")
     return THRESHOLDS
+
+
+# ==================== 测试代码 ====================
+if __name__ == "__main__":
+    import sys
+
+    # 从命令行参数获取用户ID
+    if len(sys.argv) > 1:
+        test_uid = int(sys.argv[1])
+    else:
+        # 默认测试用户
+        test_uid = 123123123
+
+    # 构建用户质量画像
+    tags = build_user_quality_profile(
+        uid=test_uid,
+        auto_save=True
+    )
+
+    if tags:
+        print(f"用户 {test_uid} 质量标签: {dict(list(tags.items())[:3])}...")
+    else:
+        print(f"用户 {test_uid} 无质量标签")

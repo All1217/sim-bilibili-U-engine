@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/recommendation-algorithm.iml" filepath="$PROJECT_DIR$/.idea/recommendation-algorithm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/algorithm-engine.iml" filepath="$PROJECT_DIR$/.idea/algorithm-engine.iml" />
     </modules>
   </component>
 </project>

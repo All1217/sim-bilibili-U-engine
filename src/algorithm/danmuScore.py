@@ -5,7 +5,7 @@
 # @Project : recommendation-algorithm
 
 from src.util.stopwords import get_stopwords_manager
-from src.util.word_segmentation import get_segmenter
+from src.util.wordHandler import get_segmenter
 
 # 初始化分词器和停用词管理器
 segmenter = get_segmenter(use_stopwords=True, use_pos_filter=False)

@@ -1,7 +1,7 @@
 # _*_ coding : utf-8 _*_
-# @Time : 2026/2/15
+# @Time : 2026/2/16
 # @Author : Morton
-# @File : profile_builder.py
+# @File : profileBuilder.py (精简打印版)
 # @Project : recommendation-algorithm
 
 import threading
@@ -41,9 +41,6 @@ class UserProfileBuilder:
             }
         """
         start_time = time.time()
-        print(f"\n{'=' * 60}")
-        print(f"🎯 开始构建用户 {uid} 的完整画像")
-        print(f"{'=' * 60}")
 
         # 提交三个任务到线程池
         future_interest = self.executor.submit(self._run_interest_module, uid, save_to_db)
@@ -69,79 +66,52 @@ class UserProfileBuilder:
             # 检查是否有至少一个模块成功
             if any([results['interest_tags'], results['behavior_tags'], results['quality_tags']]):
                 results['success'] = True
-                print(f"\n✅ 用户 {uid} 画像构建完成")
-            else:
-                print(f"\n⚠️ 用户 {uid} 所有模块均无数据")
 
         except Exception as e:
             print(f"❌ 用户 {uid} 画像构建失败: {e}")
             results['success'] = False
 
         results['execution_time'] = round(time.time() - start_time, 2)
-        print(f"⏱️ 总耗时: {results['execution_time']}秒")
 
         return results
 
     def _run_interest_module(self, uid, save_to_db):
         """运行兴趣标签模块"""
         try:
-            print(f"📊 [兴趣模块] 开始计算用户 {uid} 的兴趣标签...")
             tags = build_user_interest_profile(
                 uid=uid,
                 use_time_decay=True,
                 normalize=False,
                 auto_save=save_to_db
             )
-            print(f"📊 [兴趣模块] 完成，生成 {len(tags) if tags else 0} 个标签")
             return tags
         except Exception as e:
-            print(f"❌ [兴趣模块] 失败: {e}")
+            print(f"❌ [兴趣模块] 用户 {uid} 失败: {e}")
             return None
 
     def _run_behavior_module(self, uid, save_to_db):
         """运行行为属性模块"""
         try:
-            print(f"📊 [行为模块] 开始计算用户 {uid} 的行为标签...")
             tags = build_user_behavior_profile(
                 uid=uid,
                 include_extended=True,
                 auto_save=save_to_db
             )
-            print(f"📊 [行为模块] 完成，生成 {len(tags) if tags else 0} 个标签")
             return tags
         except Exception as e:
-            print(f"❌ [行为模块] 失败: {e}")
+            print(f"❌ [行为模块] 用户 {uid} 失败: {e}")
             return None
 
     def _run_quality_module(self, uid, save_to_db):
         """运行弹幕质量模块"""
         try:
-            print(f"📊 [质量模块] 开始计算用户 {uid} 的质量标签...")
-
-            # 添加详细的异常捕获
-            try:
-                import traceback
-                tags = build_user_quality_profile(
-                    uid=uid,
-                    auto_save=save_to_db
-                )
-            except ImportError as ie:
-                print(f"❌ [质量模块] 导入错误: {ie}")
-                traceback.print_exc()
-                return None
-            except AttributeError as ae:
-                print(f"❌ [质量模块] 属性错误: {ae}")
-                traceback.print_exc()
-                return None
-            except Exception as e:
-                print(f"❌ [质量模块] 执行错误: {e}")
-                traceback.print_exc()
-                return None
-
-            print(f"📊 [质量模块] 完成，生成 {len(tags) if tags else 0} 个标签")
+            tags = build_user_quality_profile(
+                uid=uid,
+                auto_save=save_to_db
+            )
             return tags
         except Exception as e:
-            print(f"❌ [质量模块] 失败: {e}")
+            print(f"❌ [质量模块] 用户 {uid} 失败: {e}")
             return None
 
     def batch_build_profiles(self, uid_list, save_to_db=True, max_workers=5):
@@ -163,9 +133,6 @@ class UserProfileBuilder:
             }
         """
         start_time = time.time()
-        print(f"\n{'=' * 60}")
-        print(f"🎯 开始批量构建 {len(uid_list)} 个用户的画像")
-        print(f"{'=' * 60}")
 
         results = []
         success_count = 0
@@ -186,7 +153,6 @@ class UserProfileBuilder:
                     results.append(result)
                     if result['success']:
                         success_count += 1
-                    print(f"📊 进度: {success_count}/{len(uid_list)} 完成")
                 except Exception as e:
                     print(f"❌ 用户 {uid} 处理失败: {e}")
                     results.append({
@@ -204,14 +170,6 @@ class UserProfileBuilder:
             'results': results,
             'execution_time': execution_time
         }
-
-        print(f"\n{'=' * 60}")
-        print(f"✅ 批量构建完成")
-        print(f"   总数: {summary['total']}")
-        print(f"   成功: {summary['success']}")
-        print(f"   失败: {summary['failed']}")
-        print(f"   总耗时: {summary['execution_time']}秒")
-        print(f"{'=' * 60}")
 
         return summary
 
@@ -248,13 +206,24 @@ def batch_build_profiles(uid_list, save_to_db=True, max_workers=5):
 if __name__ == "__main__":
     import sys
 
+    print("=" * 60)
+    print("🎯 用户画像构建工具")
+    print("=" * 60)
+
     if len(sys.argv) > 1:
         # 从命令行参数获取用户ID列表
         uids = [int(uid) for uid in sys.argv[1].split(',')]
+        print(f"批量构建用户: {uids}")
         result = batch_build_profiles(uids, save_to_db=True, max_workers=3)
-        print(json.dumps(result, ensure_ascii=False, indent=2))
+        print(f"完成: 成功 {result['success']}/{result['total']}, 耗时 {result['execution_time']}秒")
     else:
         # 测试单个用户
         test_uid = 123123123
+        print(f"构建单个用户: {test_uid}")
         result = build_user_profile(test_uid, save_to_db=True)
-        print(json.dumps(result, ensure_ascii=False, indent=2))
+        if result['success']:
+            print(f"✅ 成功, 耗时 {result['execution_time']}秒")
+            tag_counts = sum(1 for v in [result['interest_tags'], result['behavior_tags'], result['quality_tags']] if v)
+            print(f"   生成标签模块数: {tag_counts}/3")
+        else:
+            print(f"❌ 失败")

@@ -4,41 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b0d85de-7887-4373-ac9b-cbc008e912e5" name="Changes" comment="2025/5/27 ver1.0">
-      <change afterPath="$PROJECT_DIR$/Assets/behaviorAnalysis.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/recommend.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/stopwords.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/tags.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/trash/behaviorTag.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/trash/interestTag.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/trash/qualityTag.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/trash/这个文件夹主要存储废案.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/printStructure.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/algorithm/behaviorAnalyzer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/algorithm/behaviorTag.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/algorithm/danmuScore.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/algorithm/filterUserIdsByTags.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/algorithm/interestTag.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/algorithm/qualityTag.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/algorithm/similarUser.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/common/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/common/redisConstants.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/util/jsonHandler.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/util/profile_builder.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/util/spider.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/util/stopwords.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/util/word_segmentation.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/test.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/testRedis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/testScanDanmu.py" afterDir="false" />
+    <list default="true" id="7b0d85de-7887-4373-ac9b-cbc008e912e5" name="Changes" comment="2026/2/16 添加了用户画像引擎">
+      <change afterPath="$PROJECT_DIR$/Assets/trash/app.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/common/qualityTagConstant.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/util/rabbitmq.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/recommendation-algorithm.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/algorithm-engine.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/algorithm/recommender.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/recommender.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/trash/interestTag.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/trash/interestTag.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/trash/qualityTag.py" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/trash/qualityTag.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/algorithm/behaviorTag.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/behaviorTag.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/algorithm/danmuScore.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/danmuScore.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/algorithm/interestTag.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/interestTag.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/algorithm/qualityTag.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/qualityTag.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/algorithm/similarUser.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/similarUser.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/config/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/application.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/util/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/util/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/util/profile_builder.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/util/profileBuilder.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/util/stopwords.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/util/stopwords.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/util/word_segmentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/util/wordHandler.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,37 +59,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.behaviorAnalyzer.executor": "Run",
-    "Python.behaviorTag.executor": "Run",
-    "Python.danmuScore.executor": "Run",
-    "Python.database.executor": "Run",
-    "Python.filterUserIdsByTags.executor": "Run",
-    "Python.interestTag.executor": "Run",
-    "Python.jsonHandler.executor": "Run",
-    "Python.main (1).executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.printStructure (1).executor": "Run",
-    "Python.print_project_structure (1).executor": "Run",
-    "Python.print_project_structure.executor": "Run",
-    "Python.qualityTag.executor": "Run",
-    "Python.similarUser.executor": "Run",
-    "Python.stopwords.executor": "Run",
-    "Python.test.executor": "Run",
-    "Python.testRedis.executor": "Run",
-    "Python.testScanDanmu.executor": "Run",
-    "Python.word_segmentation.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "E:/Program files/python-projects/recommendation-algorithm/Assets/trash",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.behaviorAnalyzer.executor&quot;: &quot;Run&quot;,
+    &quot;Python.behaviorTag.executor&quot;: &quot;Run&quot;,
+    &quot;Python.danmuScore.executor&quot;: &quot;Run&quot;,
+    &quot;Python.database.executor&quot;: &quot;Run&quot;,
+    &quot;Python.filterUserIdsByTags.executor&quot;: &quot;Run&quot;,
+    &quot;Python.interestTag.executor&quot;: &quot;Run&quot;,
+    &quot;Python.jsonHandler.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.printStructure (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.print_project_structure (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.print_project_structure.executor&quot;: &quot;Run&quot;,
+    &quot;Python.qualityTag.executor&quot;: &quot;Run&quot;,
+    &quot;Python.similarUser.executor&quot;: &quot;Run&quot;,
+    &quot;Python.stopwords.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.testRedis.executor&quot;: &quot;Run&quot;,
+    &quot;Python.testScanDanmu.executor&quot;: &quot;Run&quot;,
+    &quot;Python.word_segmentation.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/Program files/python-projects/recommendation-algorithm/Assets/trash&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\Program files\python-projects\recommendation-algorithm\Assets\trash" />
@@ -118,9 +102,9 @@
       <recent name="E:\Program files\python-projects\recommendation-algorithm\src\algorithm-module" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.main (1)">
+  <component name="RunManager" selected="Python.qualityTag">
     <configuration name="interestTag" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="recommendation-algorithm" />
+      <module name="algorithm-engine" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -142,7 +126,7 @@
       <method v="2" />
     </configuration>
     <configuration name="main (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="recommendation-algorithm" />
+      <module name="algorithm-engine" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -164,7 +148,7 @@
       <method v="2" />
     </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
-      <module name="recommendation-algorithm" />
+      <module name="algorithm-engine" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -187,7 +171,7 @@
       <method v="2" />
     </configuration>
     <configuration name="printStructure (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="recommendation-algorithm" />
+      <module name="algorithm-engine" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -200,28 +184,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/printStructure.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="printStructure" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="recommendation-algorithm" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="E:\Program files\python-projects\recommendation-algorithm\printStructure.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -253,7 +215,7 @@
       <method v="2" />
     </configuration>
     <configuration name="qualityTag" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="recommendation-algorithm" />
+      <module name="algorithm-engine" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -274,13 +236,35 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="similarUser" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="algorithm-engine" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/algorithm" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/algorithm/similarUser.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.main (1)" />
         <item itemvalue="Python.qualityTag" />
+        <item itemvalue="Python.similarUser" />
+        <item itemvalue="Python.main (1)" />
         <item itemvalue="Python.printStructure (1)" />
         <item itemvalue="Python.interestTag" />
-        <item itemvalue="Python.printStructure" />
       </list>
     </recent_temporary>
   </component>
@@ -317,7 +301,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746581035215</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="2026/2/16 添加了用户画像引擎">
+      <option name="closed" value="true" />
+      <created>1771219877527</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1771219877527</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -334,6 +326,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="2025/2/21 ver1.0" />
     <MESSAGE value="2025/5/27 ver1.0" />
-    <option name="LAST_COMMIT_MESSAGE" value="2025/5/27 ver1.0" />
+    <MESSAGE value="2026/2/16 添加了用户画像引擎" />
+    <option name="LAST_COMMIT_MESSAGE" value="2026/2/16 添加了用户画像引擎" />
   </component>
 </project>

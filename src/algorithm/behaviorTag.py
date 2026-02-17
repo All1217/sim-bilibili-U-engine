@@ -1,7 +1,7 @@
 # _*_ coding : utf-8 _*_
-# @Time : 2026/2/15
+# @Time : 2026/2/16
 # @Author : Morton
-# @File : behaviorTag.py (单用户精简版)
+# @File : behaviorTag.py (精简打印版)
 # @Project : recommendation-algorithm
 
 from src.util.database import connectMySql, connectRedis
@@ -26,7 +26,6 @@ def load_thresholds():
     """
     # 尝试从Redis获取
     try:
-        print('正在尝试从Redis获取阈值……')
         redisConn = getRedisConn()
         temp = redisConn.hgetall(BEHAVIOR_THRESHOLD_KEY)
         if temp:
@@ -52,14 +51,12 @@ def load_thresholds():
                     temp.get(b'collect_threshold', 10) if isinstance(temp.get(b'collect_threshold'),
                                                                      bytes) else temp.get('collect_threshold', 10))
             }
-            print('✅ 从Redis加载阈值成功')
             return thresholds
     except Exception as e:
         print(f'从Redis获取阈值失败: {e}')
 
     # 降级到本地JSON文件
     try:
-        print('尝试从本地JSON文件获取配置……')
         json_config = loadJson("../../Assets/recommend.json")
         # 假设JSON中有behavior_thresholds字段
         if 'behavior_thresholds' in json_config:
@@ -74,7 +71,6 @@ def load_thresholds():
                 'like_ratio_threshold': 0.2,
                 'collect_threshold': 10
             }
-        print('✅ 从本地JSON加载阈值成功')
         return thresholds
     except Exception as e:
         print(f'加载阈值失败，使用默认值: {e}')
@@ -99,7 +95,6 @@ def calActiveLevel(uid):
     返回: "互动积极分子" 或 "潜水观望者" 或 None（中等活跃不标记）
     """
     if THRESHOLDS is None:
-        print('缺少建议阈值配置信息！')
         return None
 
     conn = getDBConn()
@@ -130,7 +125,6 @@ def isNightOwl(uid):
     返回: "夜猫子型用户" 或 None
     """
     if THRESHOLDS is None:
-        print('缺少建议阈值配置信息！')
         return None
 
     conn = getDBConn()
@@ -166,7 +160,6 @@ def getLikeRatio(uid):
     返回: "点赞狂魔" 或 None
     """
     if THRESHOLDS is None:
-        print('缺少建议阈值配置信息！')
         return None
 
     conn = getDBConn()
@@ -203,7 +196,6 @@ def getCollectorLevel(uid):
     返回: "收藏家" 或 None
     """
     if THRESHOLDS is None:
-        print('缺少建议阈值配置信息！')
         return None
 
     conn = getDBConn()
@@ -268,7 +260,6 @@ def save_user_tags(uid, tags_dict):
         tags_dict: {tag_name: weight, ...}
     """
     if not tags_dict:
-        print(f"用户 {uid} 没有行为标签，跳过保存")
         return
 
     conn = getDBConn()
@@ -293,8 +284,6 @@ def save_user_tags(uid, tags_dict):
     cursor.close()
     conn.close()
 
-    print(f"用户 {uid} 的行为标签已保存，共 {len(values)} 条")
-
 
 def build_user_behavior_profile(uid, include_extended=False, auto_save=True):
     """
@@ -308,21 +297,11 @@ def build_user_behavior_profile(uid, include_extended=False, auto_save=True):
     Returns:
         {tag_name: weight, ...}
     """
-    print(f"开始构建用户 {uid} 的行为画像...")
-    print(f"当前阈值配置: active={THRESHOLDS['active_threshold']}, "
-          f"passive={THRESHOLDS['passive_threshold']}, "
-          f"night_ratio={THRESHOLDS['night_ratio_threshold']}")
-
     # 计算标签
     tags = getOneUserBehaviorTags(uid, include_extended)
 
     if not tags:
-        print(f"用户 {uid} 没有明显的行为特征标签")
         return {}
-
-    # 打印结果
-    tag_list = list(tags.keys())
-    print(f"用户 {uid} 的行为标签: {', '.join(tag_list)}")
 
     # 保存到数据库
     if auto_save:
@@ -337,7 +316,6 @@ def reload_thresholds():
     """
     global THRESHOLDS
     THRESHOLDS = load_thresholds()
-    print("阈值配置已重新加载")
     return THRESHOLDS
 
 
@@ -350,21 +328,16 @@ if __name__ == "__main__":
         test_uid = int(sys.argv[1])
     else:
         # 方式2：硬编码测试用户
-        test_uid = 123123123  # 替换为你要测试的用户ID
-
-    print("=" * 60)
-    print("🎯 单用户行为画像构建工具")
-    print("=" * 60)
-    print(f"当前阈值: {THRESHOLDS}")
+        test_uid = 123123123
 
     # 构建用户画像（包含扩展标签，自动保存）
     tags = build_user_behavior_profile(
         uid=test_uid,
-        include_extended=True,  # 启用点赞狂魔和收藏家标签
+        include_extended=True,
         auto_save=True
     )
 
     if tags:
-        print("\n✅ 画像构建完成")
+        print(f"用户 {test_uid} 行为标签: {list(tags.keys())}")
     else:
-        print("\n⚠️ 画像构建失败或数据不足")
+        print(f"用户 {test_uid} 无行为标签")

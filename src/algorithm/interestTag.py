@@ -1,10 +1,10 @@
 # _*_ coding : utf-8 _*_
-# @Time : 2026/2/15
+# @Time : 2026/2/16
 # @Author : Morton
-# @File : interestTag.py (单用户精简版)
+# @File : interestTag.py (精简打印版)
 # @Project : recommendation-algorithm
 
-from src.util.word_segmentation import get_segmenter
+from src.util.wordHandler import get_segmenter
 from src.util.database import connectMySql
 from src.util.jsonHandler import loadTags
 from collections import defaultdict
@@ -210,7 +210,6 @@ def save_user_tags(uid, tags_dict):
     将用户标签保存到数据库
     """
     if not tags_dict:
-        print(f"用户 {uid} 没有标签数据，跳过保存")
         return
 
     conn = getDBConn()
@@ -228,7 +227,6 @@ def save_user_tags(uid, tags_dict):
 
     cursor.close()
     conn.close()
-    print(f"用户 {uid} 的标签已保存，共 {len(values)} 条")
 
 
 def build_user_interest_profile(uid, use_time_decay=True, normalize=False, auto_save=True):
@@ -244,19 +242,11 @@ def build_user_interest_profile(uid, use_time_decay=True, normalize=False, auto_
     Returns:
         {tag_name: weight, ...}
     """
-    print(f"开始构建用户 {uid} 的兴趣画像...")
-
     # 计算标签
     tags = calculate_interest_tags(uid, use_time_decay, normalize)
 
     if not tags:
-        print(f"用户 {uid} 没有足够的兴趣数据")
         return {}
-
-    # 打印结果
-    sorted_tags = sorted(tags.items(), key=lambda x: x[1], reverse=True)
-    tag_display = [f"{tag}:{weight}" for tag, weight in sorted_tags]
-    print(f"用户 {uid} 的兴趣标签: {', '.join(tag_display)}")
 
     # 保存到数据库
     if auto_save:
@@ -274,21 +264,17 @@ if __name__ == "__main__":
         test_uid = int(sys.argv[1])
     else:
         # 方式2：硬编码测试用户（可修改）
-        test_uid = 123123123  # 替换为你要测试的用户ID
+        test_uid = 123123123
 
-    print("=" * 60)
-    print("🎯 单用户兴趣画像构建工具")
-    print("=" * 60)
-
-    # 构建用户画像（使用时间衰减，归一化，自动保存）
+    # 构建用户画像
     tags = build_user_interest_profile(
         uid=test_uid,
         use_time_decay=True,
-        normalize=False,  # 设为True可以归一化到0-1
+        normalize=False,
         auto_save=True
     )
 
     if tags:
-        print("\n✅ 画像构建完成")
+        print(f"用户 {test_uid} 兴趣标签: {dict(list(tags.items())[:3])}...")  # 只显示前3个
     else:
-        print("\n⚠️ 画像构建失败或数据不足")
+        print(f"用户 {test_uid} 无兴趣标签")

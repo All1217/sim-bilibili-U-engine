@@ -6,7 +6,7 @@
 
 from src.util.database import connectMySql
 from danmuScore import calDanmuScore, preprocess_danmaku_text
-from src.util.word_segmentation import get_segmenter
+from src.util.wordHandler import get_segmenter
 from collections import defaultdict
 import numpy as np
 

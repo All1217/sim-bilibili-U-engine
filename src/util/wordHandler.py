@@ -1,7 +1,7 @@
 # _*_ coding : utf-8 _*_
 # @Time : 2026/2/15
 # @Author : Morton
-# @File : word_segmentation.py
+# @File : wordHandler.py
 # @Project : recommendation-algorithm
 
 import jieba

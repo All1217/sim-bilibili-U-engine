@@ -1,7 +1,7 @@
 # _*_ coding : utf-8 _*_
 # @Time : 2026/2/16
 # @Author : Morton
-# @File : stopwords.py (修复路径版)
+# @File : stopwords.py (精简打印版)
 # @Project : recommendation-algorithm
 
 import json
@@ -40,14 +40,11 @@ class StopwordsManager:
     def _load_stopwords(self):
         """加载停用词文件"""
         if not os.path.exists(self.stopwords_file):
-            print(f"⚠️ 停用词文件不存在: {self.stopwords_file}")
             # 尝试在Assets目录下查找
             alt_path = os.path.join(ASSETS_DIR, 'stopwords.json')
             if os.path.exists(alt_path):
-                print(f"✅ 在Assets目录找到备用文件: {alt_path}")
                 self.stopwords_file = alt_path
             else:
-                print(f"❌ 停用词文件加载失败，返回空字典")
                 return {}
 
         try:
@@ -108,7 +105,6 @@ class StopwordsManager:
     def reload(self):
         """重新加载停用词文件（可用于热更新）"""
         self.stopwords = self._load_stopwords()
-        print("✅ 停用词已重新加载")
         return self.stopwords
 
 
