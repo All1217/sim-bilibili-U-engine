@@ -8,11 +8,11 @@
     数据库链接参数
 """
 # mysql
-HOST = 'localhost'
-USER = 'root'
-PASSWORD = '123456'
-DATABASE = 'video'
-CHARSET = 'utf-8'
+MYSQL_HOST = 'localhost'
+MYSQL_USER = 'root'
+MYSQL_PASSWORD = '123456'
+MYSQL_DATABASE = 'video'
+MYSQL_PORT = 3306
 # redis
 REDIS_PORT = 6379
 REDIS_HOST = '192.168.150.102'

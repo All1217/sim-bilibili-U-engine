@@ -1,17 +1,15 @@
 # _*_ coding : utf-8 _*_
-# @Time : 2026/2/16
+# @Time : 2026/2/18
 # @Author : Morton
-# @File : profileBuilder.py (精简打印版)
+# @File : profileBuilder.py
 # @Project : recommendation-algorithm
 
-import threading
 import time
-import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from src.util.database import connectMySql
-from src.algorithm.interestTag import build_user_interest_profile
-from src.algorithm.behaviorTag import build_user_behavior_profile
-from src.algorithm.qualityTag import build_user_quality_profile
+from src.algorithm.interestTag import geneInterestTags
+from src.algorithm.behaviorTag import geneBehaviorTags
+from src.algorithm.qualityTag import geneQualityTags
+from src.util.database import mysql_cursor
 
 
 class UserProfileBuilder:
@@ -19,14 +17,14 @@ class UserProfileBuilder:
         """
         初始化用户画像构建器
         Args:
-            max_workers: 最大并发线程数（默认3，正好对应三个模块）
+            max_workers: 最大并发线程数
         """
         self.max_workers = max_workers
         self.executor = ThreadPoolExecutor(max_workers=max_workers)
 
-    def build_single_user_profile(self, uid, save_to_db=True):
+    def buildOneProfile(self, uid, save_to_db=True):
         """
-        构建单个用户的完整画像（多线程并发执行三个模块）
+        构建单个用户的完整画像
         Args:
             uid: 用户ID
             save_to_db: 是否保存到数据库
@@ -42,9 +40,9 @@ class UserProfileBuilder:
         """
         start_time = time.time()
         # 提交三个任务到线程池
-        future_interest = self.executor.submit(self._run_interest_module, uid, save_to_db)
-        future_behavior = self.executor.submit(self._run_behavior_module, uid, save_to_db)
-        future_quality = self.executor.submit(self._run_quality_module, uid, save_to_db)
+        future_interest = self.executor.submit(self.startInterestModule, uid, False)
+        future_behavior = self.executor.submit(self.startBehaviorModule, uid, False)
+        future_quality = self.executor.submit(self.startQualityModule, uid, False)
         results = {
             'uid': uid,
             'interest_tags': None,
@@ -58,67 +56,95 @@ class UserProfileBuilder:
             results['interest_tags'] = future_interest.result(timeout=300)  # 5分钟超时
             results['behavior_tags'] = future_behavior.result(timeout=300)
             results['quality_tags'] = future_quality.result(timeout=300)
-
             # 检查是否有至少一个模块成功
             if any([results['interest_tags'], results['behavior_tags'], results['quality_tags']]):
                 results['success'] = True
-
+                # 统一保存到数据库
+                if save_to_db:
+                    self.saveToDB(uid, results)
         except Exception as e:
             print(f"❌ 用户 {uid} 画像构建失败: {e}")
             results['success'] = False
-
         results['execution_time'] = round(time.time() - start_time, 2)
-
         return results
 
-    def _run_interest_module(self, uid, save_to_db):
+    def saveToDB(self, uid, results):
+        """
+        统一保存所有标签到数据库（使用连接池）
+        """
+        # 收集所有标签
+        all_tags = {}
+        if results['interest_tags']:
+            all_tags.update(results['interest_tags'])
+        if results['behavior_tags']:
+            all_tags.update(results['behavior_tags'])
+        if results['quality_tags']:
+            all_tags.update(results['quality_tags'])
+
+        if not all_tags:
+            return
+
+        try:
+            # 使用上下文管理器自动处理连接和事务
+            with mysql_cursor() as cursor:
+                # 1. 先删除该用户所有旧标签
+                cursor.execute("DELETE FROM user_tag WHERE uid = %s", (uid,))
+                # 2. 批量插入新标签
+                if all_tags:
+                    insert_sql = "INSERT INTO user_tag (uid, tag_name, weight) VALUES (%s, %s, %s)"
+                    values = [(uid, tag, weight) for tag, weight in all_tags.items()]
+                    cursor.executemany(insert_sql, values)
+        except Exception as e:
+            print(f"❌ 用户 {uid} 标签保存失败: {e}")
+            # 异常时自动回滚
+            raise
+
+    def startInterestModule(self, uid, save_to_db):
         """运行兴趣标签模块"""
         try:
-            tags = build_user_interest_profile(
+            tags = geneInterestTags(
                 uid=uid,
                 use_time_decay=True,
                 normalize=False,
-                auto_save=save_to_db
+                auto_save=save_to_db  # 由外部参数控制
             )
             return tags
         except Exception as e:
             print(f"❌ [兴趣模块] 用户 {uid} 失败: {e}")
             return None
 
-    def _run_behavior_module(self, uid, save_to_db):
+    def startBehaviorModule(self, uid, save_to_db):
         """运行行为属性模块"""
         try:
-            tags = build_user_behavior_profile(
+            tags = geneBehaviorTags(
                 uid=uid,
                 include_extended=True,
-                auto_save=save_to_db
+                auto_save=save_to_db  # 由外部参数控制
             )
             return tags
         except Exception as e:
             print(f"❌ [行为模块] 用户 {uid} 失败: {e}")
             return None
 
-    def _run_quality_module(self, uid, save_to_db):
+    def startQualityModule(self, uid, save_to_db):
         """运行弹幕质量模块"""
         try:
-            tags = build_user_quality_profile(
+            tags = geneQualityTags(
                 uid=uid,
-                auto_save=save_to_db
+                auto_save=save_to_db  # 由外部参数控制
             )
             return tags
         except Exception as e:
             print(f"❌ [质量模块] 用户 {uid} 失败: {e}")
             return None
 
-    def batch_build_profiles(self, uid_list, save_to_db=True, max_workers=5):
+    def batchBuildOneProfile(self, uid_list, save_to_db=True, max_workers=5):
         """
         批量构建多个用户的画像（并发执行多个用户）
-
         Args:
             uid_list: 用户ID列表
             save_to_db: 是否保存到数据库
             max_workers: 并发用户数
-
         Returns:
             {
                 'total': 10,
@@ -129,19 +155,13 @@ class UserProfileBuilder:
             }
         """
         start_time = time.time()
-
         results = []
         success_count = 0
-
-        # 使用线程池并发处理多个用户
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            # 提交所有任务
             future_to_uid = {
-                executor.submit(self.build_single_user_profile, uid, save_to_db): uid
+                executor.submit(self.buildOneProfile, uid, save_to_db): uid
                 for uid in uid_list
             }
-
-            # 收集结果
             for future in as_completed(future_to_uid):
                 uid = future_to_uid[future]
                 try:
@@ -156,9 +176,7 @@ class UserProfileBuilder:
                         'success': False,
                         'error': str(e)
                     })
-
         execution_time = round(time.time() - start_time, 2)
-
         summary = {
             'total': len(uid_list),
             'success': success_count,
@@ -166,15 +184,14 @@ class UserProfileBuilder:
             'results': results,
             'execution_time': execution_time
         }
-
         return summary
 
 
-# 创建全局单例
+# 全局单例
 _profile_builder = None
 
 
-def get_profile_builder(max_workers=3):
+def getInstance(max_workers=3):
     """获取画像构建器单例"""
     global _profile_builder
     if _profile_builder is None:
@@ -182,23 +199,22 @@ def get_profile_builder(max_workers=3):
     return _profile_builder
 
 
-def build_user_profile(uid, save_to_db=True):
+def buildOne(uid, save_to_db=True):
     """
-    对外提供的简化接口：构建单个用户画像
+    构建单个用户画像
     """
-    builder = get_profile_builder()
-    return builder.build_single_user_profile(uid, save_to_db)
+    builder = getInstance()
+    return builder.buildOneProfile(uid, save_to_db)
 
 
-def batch_build_profiles(uid_list, save_to_db=True, max_workers=5):
+def batchBuild(uids, save_to_db=True, max_workers=5):
     """
-    对外提供的简化接口：批量构建用户画像
+    批量构建用户画像
     """
-    builder = get_profile_builder()
-    return builder.batch_build_profiles(uid_list, save_to_db, max_workers)
+    builder = getInstance()
+    return builder.batchBuildOneProfile(uids, save_to_db, max_workers)
 
 
-# ==================== 测试代码 ====================
 if __name__ == "__main__":
     import sys
 
@@ -207,19 +223,24 @@ if __name__ == "__main__":
     print("=" * 60)
 
     if len(sys.argv) > 1:
-        # 从命令行参数获取用户ID列表
         uids = [int(uid) for uid in sys.argv[1].split(',')]
         print(f"批量构建用户: {uids}")
-        result = batch_build_profiles(uids, save_to_db=True, max_workers=3)
+        result = batchBuild(uids, save_to_db=True, max_workers=3)
         print(f"完成: 成功 {result['success']}/{result['total']}, 耗时 {result['execution_time']}秒")
     else:
-        # 测试单个用户
         test_uid = 123123123
         print(f"构建单个用户: {test_uid}")
-        result = build_user_profile(test_uid, save_to_db=True)
+        result = buildOne(test_uid, save_to_db=True)
         if result['success']:
             print(f"✅ 成功, 耗时 {result['execution_time']}秒")
             tag_counts = sum(1 for v in [result['interest_tags'], result['behavior_tags'], result['quality_tags']] if v)
             print(f"   生成标签模块数: {tag_counts}/3")
+            # 显示各模块标签数量
+            if result['interest_tags']:
+                print(f"   兴趣标签: {len(result['interest_tags'])} 个")
+            if result['behavior_tags']:
+                print(f"   行为标签: {len(result['behavior_tags'])} 个")
+            if result['quality_tags']:
+                print(f"   质量标签: {len(result['quality_tags'])} 个")
         else:
             print(f"❌ 失败")

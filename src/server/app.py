@@ -8,8 +8,8 @@ from flask import Flask, jsonify, request
 from apscheduler.schedulers.background import BackgroundScheduler
 from src.algorithm.recommender import getRecommendations
 from src.util.spider import Spider
-from src.util.database import connectRedis
-from src.util.profileBuilder import build_user_profile
+from src.util.database import init_pools, get_redis_client
+from src.util.profileBuilder import buildOne
 from src.util.rabbitmq import startRabbitmq, stopRabbitmq
 from src.algorithm.similarUser import startSimilar
 import threading
@@ -19,6 +19,7 @@ import json
 import atexit
 
 app = Flask(__name__)
+init_pools()  # 初始化数据库连接池
 # 简单的任务队列
 profile_tasks = {}
 profile_results = {}
@@ -40,7 +41,7 @@ def crawlHotSearch():
 def scheduled_job():
     try:
         res = crawlHotSearch()
-        r = connectRedis()
+        r = get_redis_client()  # 从连接池获取Redis客户端
         r.set("hotSearch", json.dumps(res['data']['trending']))
     except Exception as e:
         print(f"❌ 定时任务执行失败: {e}")
@@ -88,7 +89,7 @@ def buildUserProfile(user_id):
     同步构建用户画像（会阻塞请求直到完成），主要用于测试
     """
     try:
-        result = build_user_profile(user_id, save_to_db=True)
+        result = buildOne(user_id, save_to_db=True)
         if result['success']:
             return jsonify({'code': 200, 'message': '用户画像构建成功', 'data': None})
         else:
@@ -108,7 +109,7 @@ def buildUserProfileAsync(user_id):
 
         def background_task():
             try:
-                result = build_user_profile(user_id, save_to_db=True)
+                result = buildOne(user_id, save_to_db=True)
                 profile_results[task_id] = {'status': 'completed', 'result': result}
             except Exception as e:
                 profile_results[task_id] = {'status': 'failed', 'error': str(e)}

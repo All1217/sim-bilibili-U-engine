@@ -1,16 +1,12 @@
 # _*_ coding : utf-8 _*_
-# @Time : 2026/2/16
+# @Time : 2026/2/18
 # @Author : Morton
-# @File : similarUser.py (精简版)
+# @File : similarUser.py (连接池版)
 # @Project : recommendation-algorithm
 
-from src.util.database import connectMySql
+from src.util.database import mysql_cursor
 import math
 from collections import defaultdict
-
-
-def getDBConn():
-    return connectMySql()
 
 
 def get_user_tags(uid):
@@ -18,19 +14,15 @@ def get_user_tags(uid):
     获取指定用户的所有标签及其权重
     返回: {tag_name: weight, ...}
     """
-    conn = getDBConn()
-    cursor = conn.cursor()
+    with mysql_cursor() as cursor:
+        cursor.execute("""
+            SELECT tag_name, weight
+            FROM user_tag
+            WHERE uid = %s
+        """, (uid,))
+        rows = cursor.fetchall()
 
-    cursor.execute("""
-        SELECT tag_name, weight
-        FROM user_tag
-        WHERE uid = %s
-    """, (uid,))
-
-    tags = {row[0]: row[1] for row in cursor.fetchall()}
-
-    cursor.close()
-    conn.close()
+    tags = {row['tag_name']: row['weight'] for row in rows}
     return tags
 
 
@@ -38,9 +30,6 @@ def get_video_danmaku_users(vid, exclude_uid=None, min_danmaku=1):
     """
     获取指定视频中发了弹幕的用户ID列表
     """
-    conn = getDBConn()
-    cursor = conn.cursor()
-
     query = """
         SELECT uid, COUNT(*) as cnt
         FROM danmu
@@ -55,11 +44,11 @@ def get_video_danmaku_users(vid, exclude_uid=None, min_danmaku=1):
     query += " GROUP BY uid HAVING cnt >= %s ORDER BY cnt DESC"
     params.append(min_danmaku)
 
-    cursor.execute(query, params)
-    users = [row[0] for row in cursor.fetchall()]
+    with mysql_cursor() as cursor:
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
 
-    cursor.close()
-    conn.close()
+    users = [row['uid'] for row in rows]
     return users
 
 
@@ -107,22 +96,19 @@ def find_similar_users(target_uid, vid, top_n=10, min_danmaku=1):
         return []
 
     # 3. 批量获取候选用户的标签
-    conn = getDBConn()
-    cursor = conn.cursor()
-
     placeholders = ','.join(['%s'] * len(candidate_uids))
-    cursor.execute(f"""
-        SELECT uid, tag_name, weight
-        FROM user_tag
-        WHERE uid IN ({placeholders})
-    """, candidate_uids)
+
+    with mysql_cursor() as cursor:
+        cursor.execute(f"""
+            SELECT uid, tag_name, weight
+            FROM user_tag
+            WHERE uid IN ({placeholders})
+        """, candidate_uids)
+        rows = cursor.fetchall()
 
     candidate_tags = defaultdict(dict)
-    for uid, tag_name, weight in cursor.fetchall():
-        candidate_tags[uid][tag_name] = weight
-
-    cursor.close()
-    conn.close()
+    for row in rows:
+        candidate_tags[row['uid']][row['tag_name']] = row['weight']
 
     # 4. 计算相似度并排序
     similarities = []
@@ -153,7 +139,6 @@ def startSimilar(vid, target_uid, limit=5):
     return find_similar_users(target_uid, vid, top_n=limit, min_danmaku=1)
 
 
-# ==================== 测试代码 ====================
 if __name__ == "__main__":
     test_vid = 35
     test_uid = 123123123

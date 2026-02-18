@@ -8,7 +8,7 @@ import pika
 import json
 import traceback
 import threading
-from src.util.profileBuilder import build_user_profile
+from src.util.profileBuilder import buildOne
 from concurrent.futures import ThreadPoolExecutor
 import src.config.application as config
 
@@ -70,7 +70,7 @@ class RabbitMQListener:
                     message = json.loads(body)
                 uid = message.get('uid')
                 # 执行画像构建
-                build_user_profile(uid, save_to_db=True)
+                buildOne(uid, save_to_db=True)
                 # 确认消息
                 ch.basic_ack(delivery_tag=method.delivery_tag)
             except Exception as e:
