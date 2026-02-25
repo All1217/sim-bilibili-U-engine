@@ -4,32 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b0d85de-7887-4373-ac9b-cbc008e912e5" name="Changes" comment="2026/2/16 修改了初始化Rabbitmq的代码">
-      <change afterPath="$PROJECT_DIR$/Assets/qualityThreshold.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/algorithm/qualityAnalyzer.py" afterDir="false" />
+    <list default="true" id="7b0d85de-7887-4373-ac9b-cbc008e912e5" name="Changes" comment="2026/2/18 进一步优化代码，引入数据库连接池；简化了冗余代码；完善了阈值配置">
+      <change afterPath="$PROJECT_DIR$/test/testElasticsearch.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/testElasticsearchVector.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/testRedisVector.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/testVectorModel.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/stopwords.json" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/stopwords.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/trash/app.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/trash/behaviorTag.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/trash/interestTag.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/trash/qualityTag.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/trash/这个文件夹主要存储废案.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/professionalWords.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project_structure.txt" beforeDir="false" afterPath="$PROJECT_DIR$/project_structure.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/algorithm/behaviorAnalyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/behaviorAnalyzer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/algorithm/behaviorTag.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/behaviorTag.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/algorithm/danmuScore.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/danmuScore.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/algorithm/filterUserIdsByTags.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/algorithm/interestTag.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/interestTag.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/algorithm/qualityTag.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/qualityTag.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/algorithm/recommender.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/recommender.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/algorithm/similarUser.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/similarUser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/config/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/application.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/util/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/util/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/util/jsonHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/util/jsonHandler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/util/profileBuilder.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/util/profileBuilder.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/util/rabbitmq.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/util/rabbitmq.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/util/stopwords.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/util/stopwords.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/util/stopwords.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/util/wordHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/util/wordHandler.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -53,12 +38,12 @@
     &quot;assignee&quot;: &quot;All1217&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "git@github.com:All1217/simulate-bilibili-recommender.git",
-    "accountId": "aaf68fcf-e508-48ac-9dcd-b76ca62afffa"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:All1217/simulate-bilibili-recommender.git&quot;,
+    &quot;accountId&quot;: &quot;aaf68fcf-e508-48ac-9dcd-b76ca62afffa&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>
@@ -67,40 +52,45 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.behaviorAnalyzer.executor": "Run",
-    "Python.behaviorTag.executor": "Run",
-    "Python.danmuScore.executor": "Run",
-    "Python.database.executor": "Run",
-    "Python.filterUserIdsByTags.executor": "Run",
-    "Python.interestTag.executor": "Run",
-    "Python.jsonHandler.executor": "Run",
-    "Python.main (1).executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.printStructure (1).executor": "Run",
-    "Python.printStructure.executor": "Run",
-    "Python.print_project_structure (1).executor": "Run",
-    "Python.print_project_structure.executor": "Run",
-    "Python.profileBuilder.executor": "Run",
-    "Python.qualityAnalyzer.executor": "Run",
-    "Python.qualityTag.executor": "Run",
-    "Python.similarUser.executor": "Run",
-    "Python.stopwords.executor": "Run",
-    "Python.test.executor": "Run",
-    "Python.testRedis.executor": "Run",
-    "Python.testScanDanmu.executor": "Run",
-    "Python.word_segmentation.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "E:/Program files/python-projects/recommendation-algorithm/Assets/trash",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.behaviorAnalyzer.executor&quot;: &quot;Run&quot;,
+    &quot;Python.behaviorTag.executor&quot;: &quot;Run&quot;,
+    &quot;Python.danmuScore.executor&quot;: &quot;Run&quot;,
+    &quot;Python.database.executor&quot;: &quot;Run&quot;,
+    &quot;Python.filterUserIdsByTags.executor&quot;: &quot;Run&quot;,
+    &quot;Python.interestTag.executor&quot;: &quot;Run&quot;,
+    &quot;Python.jsonHandler.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.printStructure (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.printStructure.executor&quot;: &quot;Run&quot;,
+    &quot;Python.print_project_structure (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.print_project_structure.executor&quot;: &quot;Run&quot;,
+    &quot;Python.profileBuilder.executor&quot;: &quot;Run&quot;,
+    &quot;Python.qualityAnalyzer.executor&quot;: &quot;Run&quot;,
+    &quot;Python.qualityTag.executor&quot;: &quot;Run&quot;,
+    &quot;Python.similarUser.executor&quot;: &quot;Run&quot;,
+    &quot;Python.stopwords.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.testElasticsearch.executor&quot;: &quot;Run&quot;,
+    &quot;Python.testElasticsearchVector.executor&quot;: &quot;Run&quot;,
+    &quot;Python.testRedis.executor&quot;: &quot;Run&quot;,
+    &quot;Python.testRedisVector.executor&quot;: &quot;Run&quot;,
+    &quot;Python.testScanDanmu.executor&quot;: &quot;Run&quot;,
+    &quot;Python.testVectorModel.executor&quot;: &quot;Run&quot;,
+    &quot;Python.wordHandler.executor&quot;: &quot;Run&quot;,
+    &quot;Python.word_segmentation.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/Program files/python-projects/recommendation-algorithm/Assets/trash&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\Program files\python-projects\recommendation-algorithm\Assets\trash" />
@@ -114,7 +104,7 @@
       <recent name="E:\Program files\python-projects\recommendation-algorithm\src\algorithm-module" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.main (1)">
+  <component name="RunManager" selected="Python.testVectorModel">
     <configuration name="behaviorAnalyzer" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="algorithm-engine" />
       <option name="ENV_FILES" value="" />
@@ -129,28 +119,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/algorithm/behaviorAnalyzer.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="main (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="algorithm-engine" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -182,7 +150,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="printStructure" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="testElasticsearch" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="algorithm-engine" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -191,11 +159,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/printStructure.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test/testElasticsearch.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -204,7 +172,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="profileBuilder" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="testElasticsearchVector" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="algorithm-engine" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -213,11 +181,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/util" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/util/profileBuilder.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test/testElasticsearchVector.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -226,7 +194,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="qualityAnalyzer" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="testRedisVector" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="algorithm-engine" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -235,11 +203,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/algorithm" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/algorithm/qualityAnalyzer.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test/testRedisVector.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -248,13 +216,44 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="testVectorModel" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="algorithm-engine" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="DASHSCOPE_API_KEY" value="sk-6b26dc4ab1204cf2856c7ce2a6256a44" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test/testVectorModel.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.behaviorAnalyzer" />
+      <item itemvalue="Python.main" />
+      <item itemvalue="Python.testElasticsearchVector" />
+      <item itemvalue="Python.testElasticsearch" />
+      <item itemvalue="Python.testRedisVector" />
+      <item itemvalue="Python.testVectorModel" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.main (1)" />
+        <item itemvalue="Python.testVectorModel" />
+        <item itemvalue="Python.testElasticsearchVector" />
+        <item itemvalue="Python.testElasticsearch" />
+        <item itemvalue="Python.testRedisVector" />
         <item itemvalue="Python.behaviorAnalyzer" />
-        <item itemvalue="Python.printStructure" />
-        <item itemvalue="Python.qualityAnalyzer" />
-        <item itemvalue="Python.profileBuilder" />
       </list>
     </recent_temporary>
   </component>
@@ -315,7 +314,15 @@
       <option name="project" value="LOCAL" />
       <updated>1771338679989</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="2026/2/18 进一步优化代码，引入数据库连接池；简化了冗余代码；完善了阈值配置">
+      <option name="closed" value="true" />
+      <created>1771409513942</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1771409513942</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -335,6 +342,7 @@
     <MESSAGE value="2026/2/16 添加了用户画像引擎" />
     <MESSAGE value="2026/2/16 精简了部分代码，完善了部分接口" />
     <MESSAGE value="2026/2/16 修改了初始化Rabbitmq的代码" />
-    <option name="LAST_COMMIT_MESSAGE" value="2026/2/16 修改了初始化Rabbitmq的代码" />
+    <MESSAGE value="2026/2/18 进一步优化代码，引入数据库连接池；简化了冗余代码；完善了阈值配置" />
+    <option name="LAST_COMMIT_MESSAGE" value="2026/2/18 进一步优化代码，引入数据库连接池；简化了冗余代码；完善了阈值配置" />
   </component>
 </project>

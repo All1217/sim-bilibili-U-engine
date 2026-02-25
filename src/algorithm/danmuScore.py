@@ -4,15 +4,12 @@
 # @File : danmuScore.py
 # @Project : recommendation-algorithm
 
-from src.util.stopwords import getStopwordsBuilder
 from src.util.wordHandler import get_segmenter
 from src.util.jsonHandler import loadJson
 
 PROFESSIONAL_WORDS = loadJson('professionalWords.json')
 
-# 初始化分词器和停用词管理器
 segmenter = get_segmenter(use_stopwords=True, use_pos_filter=False)
-stopwords_mgr = getStopwordsBuilder()
 
 
 def preprocessText(text):

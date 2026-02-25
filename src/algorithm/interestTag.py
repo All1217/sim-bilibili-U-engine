@@ -17,32 +17,6 @@ segmenter = get_segmenter(use_stopwords=True, use_pos_filter=True)
 SEMANTIC_TAGS = loadJson('tags.json')
 
 
-def loadVideoTags(uid):
-    """
-    加载用户观看过的所有视频的标签
-    返回: {vid: [tag1, tag2, ...]}
-    """
-    with mysql_cursor() as cursor:
-        cursor.execute("""
-            SELECT v.vid, v.tags
-            FROM video v
-            JOIN user_video uv ON v.vid = uv.vid
-            WHERE uv.uid = %s AND v.status = 1 AND v.tags IS NOT NULL
-        """, (uid,))
-        rows = cursor.fetchall()
-
-    video_tags = {}
-    for row in rows:
-        vid = row['vid']
-        tags_str = row['tags']
-        if tags_str and tags_str.strip():
-            video_tags[vid] = tags_str.strip().split()
-        else:
-            video_tags[vid] = []
-
-    return video_tags
-
-
 def matchText(text):
     """
     将文本匹配到语义标签
@@ -201,7 +175,6 @@ def saveTags(uid, tags_dict):
     """
     if not tags_dict:
         return
-
     try:
         with mysql_cursor() as cursor:
             cursor.execute("DELETE FROM user_tag WHERE uid = %s", (uid,))

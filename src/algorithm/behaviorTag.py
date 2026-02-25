@@ -115,28 +115,6 @@ def isNightOwl(uid):
         return None
 
 
-def getCollectorLevel(uid):
-    """
-    判断是否为收藏家
-    返回: "收藏家" 或 None
-    """
-    if THRESHOLDS is None:
-        return None
-
-    with mysql_cursor() as cursor:
-        cursor.execute("""
-            SELECT COUNT(*) as collect_count
-            FROM user_video
-            WHERE uid = %s AND collect = 1
-        """, (uid,))
-        result = cursor.fetchone()
-        collect_count = result['collect_count'] if result else 0
-
-    if collect_count >= THRESHOLDS.get("collect_threshold", 10):
-        return "收藏家"
-    return None
-
-
 def getOneUserBehaviorTags(uid, include_extended=False):
     """
     获取单个用户的所有行为标签

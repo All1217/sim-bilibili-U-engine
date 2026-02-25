@@ -5,10 +5,9 @@
 # @Project : recommendation-algorithm
 
 import jieba
-import jieba.posseg as pseg
 import jieba.analyse
 
-from src.util.stopwords import getStopwordsBuilder
+from src.util.jsonHandler import loadJson
 
 
 class WordSegmenter:
@@ -21,10 +20,10 @@ class WordSegmenter:
             use_stopwords: 是否使用停用词过滤
             use_pos_filter: 是否使用词性过滤（只保留名词、动词等）
         """
-        self.stopwords_mgr = getStopwordsBuilder() if use_stopwords else None
+        self.stopwords = list(self.loadStopwords()) if use_stopwords else None
         self.use_pos_filter = use_pos_filter
 
-        # 加载自定义词典（如果有）
+        # 加载自定义词典（暂时没用到）
         self._load_custom_dict()
 
         # 词性保留列表（当use_pos_filter=True时生效）
@@ -35,6 +34,17 @@ class WordSegmenter:
             'i', 'l',  # 成语和习语
             'j',  # 简称
         }
+
+    def loadStopwords(self):
+        tWords = loadJson('stopwords.json')
+        all_words = set()
+        for category, wordList in tWords.items():
+            if isinstance(wordList, list):
+                all_words.update(wordList)
+        return all_words
+
+    def isStopword(self, word):
+        return word in self.stopwords
 
     def _load_custom_dict(self):
         """加载自定义词典（例如弹幕特有词汇）"""
@@ -49,13 +59,12 @@ class WordSegmenter:
         for word in custom_words:
             jieba.add_word(word)
 
-    def segment(self, text, cut_all=False, return_pos=False):
+    def segment(self, text, cut_all=False):
         """
         对文本进行分词
         Args:
             text: 输入文本
             cut_all: 是否使用全模式（默认精确模式）
-            return_pos: 是否返回词性标注
         Returns:
             如果 return_pos=False: 返回词列表
             如果 return_pos=True: 返回 (word, pos) 元组列表
@@ -66,27 +75,16 @@ class WordSegmenter:
         text = text.strip()
         if not text:
             return []
-        if return_pos:
-            # 词性标注模式
-            words = list(pseg.cut(text))
         else:
             # 普通分词模式
             if cut_all:
-                words = list(jieba.cut(text, cut_all=True))
+                wordList = list(jieba.cut(text, cut_all=True))
             else:
-                words = list(jieba.cut(text))
+                wordList = list(jieba.cut(text))
         # 停用词过滤
-        if self.stopwords_mgr:
-            if return_pos:
-                words = [(w, pos) for w, pos in words
-                         if not self.stopwords_mgr.isStopword(w)]
-            else:
-                words = [w for w in words
-                         if not self.stopwords_mgr.isStopword(w)]
-        # 词性过滤
-        if self.use_pos_filter and return_pos:
-            words = [(w, pos) for w, pos in words if pos in self.keep_pos]
-        return words
+        if self.stopwords:
+            wordList = [w for w in wordList if not self.isStopword(w)]
+        return wordList
 
     def extractKeywords(self, text, topK=5, with_weight=False):
         """
@@ -99,38 +97,12 @@ class WordSegmenter:
             关键词列表 或 (关键词, 权重) 列表
         """
         # 分词（中间包含停用词过滤过程）
-        if self.stopwords_mgr:
-            words = self.segment(text)
-            text = ' '.join(words)
+        wordList = self.segment(text)
+        text = ' '.join(wordList)
         if with_weight:
             return jieba.analyse.extract_tags(text, topK=topK, withWeight=True)
         else:
             return jieba.analyse.extract_tags(text, topK=topK)
-
-    def get_noun_phrases(self, text):
-        """
-        提取名词短语（基于词性标注）
-        Args:
-            text: 输入文本
-        Returns:
-            名词短语列表
-        """
-        words = self.segment(text, return_pos=True)
-        noun_phrases = []
-        current_phrase = []
-        for word, pos in words:
-            # 如果是名词或形容词，加入到当前短语
-            if pos in self.keep_pos:
-                current_phrase.append(word)
-            else:
-                # 遇到非名词/形容词，结束当前短语
-                if current_phrase:
-                    noun_phrases.append(''.join(current_phrase))
-                    current_phrase = []
-        # 处理最后一个短语
-        if current_phrase:
-            noun_phrases.append(''.join(current_phrase))
-        return noun_phrases
 
 
 # 创建全局单例
@@ -161,12 +133,6 @@ if __name__ == "__main__":
         # 普通分词
         words = segmenter.segment(text)
         print(f"分词: {'/'.join(words)}")
-        # 带词性标注
-        words_pos = segmenter.segment(text, return_pos=True)
-        print(f"词性: {[(w, pos) for w, pos in words_pos]}")
         # 关键词提取
         keywords = segmenter.extractKeywords(text, topK=3)
         print(f"关键词: {keywords}")
-        # 名词短语
-        phrases = segmenter.get_noun_phrases(text)
-        print(f"名词短语: {phrases}")

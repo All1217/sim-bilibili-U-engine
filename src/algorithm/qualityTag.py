@@ -159,7 +159,6 @@ def calQualityStats(uid):
             stats['long_count'] += 1
         elif text_len <= THRESHOLDS['short_danmaku_threshold']:
             stats['short_count'] += 1
-
     return scores, stats
 
 
