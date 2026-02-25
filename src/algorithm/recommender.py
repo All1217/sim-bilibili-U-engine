@@ -2,7 +2,7 @@
 # @Time : 2026/2/18
 # @Author : Morton
 # @File : recommender.py
-# @Project : recommendation-algorithm
+# @Project : algorithm-engine
 # TODO: 将基于物品的协同过滤与用户画像结合形成组合推荐系统
 
 import pandas as pd

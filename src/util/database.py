@@ -2,12 +2,13 @@
 # @Time : 2026/2/18
 # @Author : Morton
 # @File : database.py
-# @Project : recommendation-algorithm
+# @Project : algorithm-engine
 
 import pymysql
 from contextlib import contextmanager
 from pymysql.constants import CLIENT
 from dbutils.pooled_db import PooledDB
+from elasticsearch import Elasticsearch
 import redis
 import src.config.application as config
 import threading
@@ -198,20 +199,15 @@ def close_all_pools():
 # 注册退出时的清理函数
 atexit.register(close_all_pools)
 
-if __name__ == '__main__':
-    # 测试连接池初始化
-    print("测试连接池...")
-    pool1 = get_mysql_pool()
-    pool2 = get_mysql_pool()
-    print(f"是否是同一个实例? {pool1 is pool2}")  # 应该输出 True
+# elasticsearch包已内置连接池，不用我们手动写
+ES_LINK = 'http://' + config.ES_HOST + ':' + str(config.ES_PORT)
+es_client = Elasticsearch(
+    ES_LINK,
+    maxsize=20,
+    retry_on_timeout=True,
+    timeout=30
+)
 
-    # 测试数据库操作
-    with mysql_cursor() as cursor:
-        cursor.execute("SELECT 1")
-        result = cursor.fetchone()
-        print(f"数据库连接测试: {result}")
-
-    # 测试Redis
-    r = get_redis_client()
-    r.set('test_key', 'test_value')
-    print(f"Redis连接测试: {r.get('test_key')}")
+def getES():
+    """直接返回ES客户端（自动管理连接池）"""
+    return es_client

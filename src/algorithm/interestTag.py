@@ -2,12 +2,15 @@
 # @Time : 2026/2/18
 # @Author : Morton
 # @File : interestTag.py
-# @Project : recommendation-algorithm
+# @Project : algorithm-engine
+# TODO: matchTextModel()需要批处理优化！原来都是在本地计算的，引入大模型后每条弹幕、每个视频标签都要发一次网络请求，非常慢
 
 from src.util.wordHandler import get_segmenter
 from src.util.database import mysql_cursor
 from src.util.jsonHandler import loadJson
 from collections import defaultdict
+from typing import List, Dict, Any
+from src.algorithm.vectorization import getTagVectorManager
 import datetime
 
 # 初始化分词器
@@ -36,6 +39,32 @@ def matchText(text):
             if keyword.lower() in effective_words or keyword.lower() in text_lower:
                 matches[tag_name] += 1
     return dict(matches)
+
+
+def matchTextModel(text: str, use_vector: bool = True) -> Dict[str, int]:
+    """
+    标签匹配函数
+    Args:
+        text: 输入文本
+        use_vector: 是否尝试使用向量方法
+    Returns:
+        {tag_name: match_count, ...} 兼容旧格式
+    """
+    if not text:
+        return {}
+    if use_vector:
+        try:
+            manager = getTagVectorManager()
+            similar_tags = manager.search_similar_tags(text, top_k=3)
+            matches = {}
+            for tag, similarity in similar_tags.items():
+                if similarity > 0.5:
+                    matches[tag] = max(1, min(10, int(similarity * 20)))
+            if matches:
+                return matches
+        except Exception as e:
+            print(f"⚠️ 向量匹配失败: {e}，降级到关键词匹配")
+    return matchText(text)
 
 
 def calInterestTags(uid, use_time_decay=True, normalize=False):
@@ -68,17 +97,13 @@ def calInterestTags(uid, use_time_decay=True, normalize=False):
         coin = row['coin']
         collect = row['collect']
         play_time = row['play_time']
-
         if not tags_str or not tags_str.strip():
             continue
-
         video_tags = tags_str.strip().split()
         video_text = " ".join(video_tags)
-        tag_matches = matchText(video_text)
-
+        tag_matches = matchTextModel(video_text)
         if not tag_matches:
             continue
-
         # 计算交互权重
         interaction_weight = 0
         if play > 0:
@@ -89,10 +114,8 @@ def calInterestTags(uid, use_time_decay=True, normalize=False):
             interaction_weight += coin
         if collect == 1:
             interaction_weight += 3
-
         # 视频源权重系数
         video_factor = 0.6
-
         # 时间衰减（如果启用）
         time_factor = 1.0
         if use_time_decay and play_time:
@@ -105,7 +128,6 @@ def calInterestTags(uid, use_time_decay=True, normalize=False):
                 time_factor = 0.6
             else:
                 time_factor = 0.3
-
         for tag_name, match_count in tag_matches.items():
             weights[tag_name] += interaction_weight * match_count * video_factor * time_factor
 
@@ -122,11 +144,9 @@ def calInterestTags(uid, use_time_decay=True, normalize=False):
     for row in danmaku_rows:
         content = row['content']
         create_date = row['create_date']
-
-        tag_matches = matchText(content)
+        tag_matches = matchTextModel(content)
         if not tag_matches:
             continue
-
         time_factor = 1.0
         if use_time_decay and create_date:
             days_diff = (now - create_date).days
@@ -138,7 +158,6 @@ def calInterestTags(uid, use_time_decay=True, normalize=False):
                 time_factor = 0.5
             else:
                 time_factor = 0.2
-
         # 弹幕长度加权
         length = len(content)
         if length <= 5:
@@ -147,10 +166,8 @@ def calInterestTags(uid, use_time_decay=True, normalize=False):
             length_factor = 1.0
         else:
             length_factor = 1.5
-
         # 弹幕权重系数
         danmaku_factor = 1.0
-
         for tag_name, match_count in tag_matches.items():
             weights[tag_name] += match_count * time_factor * length_factor * danmaku_factor
 
@@ -207,29 +224,3 @@ def geneInterestTags(uid, use_time_decay=True, normalize=False, auto_save=True):
         saveTags(uid, tags)
 
     return tags
-
-
-if __name__ == "__main__":
-    import sys
-
-    # 方式1：从命令行参数获取用户ID
-    if len(sys.argv) > 1:
-        test_uid = int(sys.argv[1])
-    else:
-        # 方式2：硬编码测试用户（可修改）
-        test_uid = 123123123
-
-    # 构建用户画像
-    tags = geneInterestTags(
-        uid=test_uid,
-        use_time_decay=True,
-        normalize=False,
-        auto_save=True
-    )
-
-    if tags:
-        # 只显示前3个标签
-        preview = dict(list(tags.items())[:3])
-        print(f"用户 {test_uid} 兴趣标签: {preview}...")
-    else:
-        print(f"用户 {test_uid} 无兴趣标签")

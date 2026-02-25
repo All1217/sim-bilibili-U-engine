@@ -2,7 +2,7 @@
 # @Time : 2026/2/18
 # @Author : Morton
 # @File : behaviorTag.py
-# @Project : recommendation-algorithm
+# @Project : algorithm-engine
 
 import sys
 from src.util.database import mysql_cursor, get_redis_client
@@ -104,11 +104,9 @@ def isNightOwl(uid):
 
     if len(hours) < THRESHOLDS["night_min_samples"]:
         return None  # 样本太少，不判断
-
     # 统计凌晨时段（0点-5点）的弹幕比例
     night_hours = [h for h in hours if 0 <= h <= 5]
     night_ratio = len(night_hours) / len(hours) if hours else 0
-
     if night_ratio >= THRESHOLDS["night_ratio_threshold"]:
         return "夜猫子型用户"
     else:
@@ -146,7 +144,6 @@ def saveToDB(uid, tags_dict):
     """
     if not tags_dict:
         return
-
     # 定义行为标签列表（用于删除）
     behavior_tags = ["互动积极分子", "潜水观望者", "夜猫子型用户", "点赞狂魔", "收藏家"]
     try:
@@ -179,30 +176,8 @@ def geneBehaviorTags(uid, include_extended=False, auto_save=True):
     tags = getOneUserBehaviorTags(uid, include_extended)
     if not tags:
         return {}
-
     # 保存到数据库
     if auto_save:
         saveToDB(uid, tags)
 
     return tags
-
-
-if __name__ == "__main__":
-    # 方式1：从命令行参数获取用户ID
-    if len(sys.argv) > 1:
-        test_uid = int(sys.argv[1])
-    else:
-        # 方式2：硬编码测试用户
-        test_uid = 123123123
-
-    # 构建用户画像（包含扩展标签，自动保存）
-    tags = geneBehaviorTags(
-        uid=test_uid,
-        include_extended=True,
-        auto_save=True
-    )
-
-    if tags:
-        print(f"用户 {test_uid} 行为标签: {list(tags.keys())}")
-    else:
-        print(f"用户 {test_uid} 无行为标签")

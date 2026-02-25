@@ -2,7 +2,7 @@
 # @Time : 2026/2/15 14:14
 # @Author : Morton
 # @File : redisConstants
-# @Project : recommendation-algorithm
+# @Project : algorithm-engine
 
 # 建议行为标签阈值的Redis键
 BEHAVIOR_THRESHOLD_KEY = 'behavior:threshold'

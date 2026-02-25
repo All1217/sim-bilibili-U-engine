@@ -2,20 +2,19 @@
 # @Time : 2025/2/19 16:42
 # @Author : Morton
 # @File : starter
-# @Project : recommendation-algorithm
+# @Project : algorithm-engine
 
 from flask import Flask, jsonify, request
 from apscheduler.schedulers.background import BackgroundScheduler
 from src.algorithm.recommender import getRecommendations
-from src.util.spider import Spider
-from src.util.database import init_pools, get_redis_client
+from src.util.database import init_pools
 from src.util.profileBuilder import buildOne
 from src.util.rabbitmq import startRabbitmq, stopRabbitmq
 from src.algorithm.similarUser import startSimilar
+from src.util.scheduledJobs import scheduled_job, refreshBehaviorThreshold
 import threading
 import src.config.application as config
 import time
-import json
 import atexit
 
 app = Flask(__name__)
@@ -24,32 +23,10 @@ init_pools()  # 初始化数据库连接池
 profile_tasks = {}
 profile_results = {}
 
-
-# 爬虫代码
-def crawlHotSearch():
-    spider = Spider({
-        "user-agent": config.USER_AGENT,
-        "cookie": config.COOKIE,
-        "referer": config.REFERER
-    })
-    res = spider.crawl(
-        f"https://api.bilibili.com/x/web-interface/wbi/search/square?limit=10&platform=web&web_location=333.1007&w_rid=7a4bb9b40d22a2ca4563f32bfccf062b&wts={time.time()}")
-    return res
-
-
-# 爬取B站热搜信息存入Redis数据库
-def scheduled_job():
-    try:
-        res = crawlHotSearch()
-        r = get_redis_client()  # 从连接池获取Redis客户端
-        r.set("hotSearch", json.dumps(res['data']['trending']))
-    except Exception as e:
-        print(f"❌ 定时任务执行失败: {e}")
-
-
 # 初始化 APScheduler
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=scheduled_job, trigger="interval", seconds=config.TASK_GAP)
+scheduler.add_job(func=refreshBehaviorThreshold, trigger="interval", seconds=config.TASK_GAP)
 scheduler.start()
 print("✅ 定时任务调度器已启动")
 

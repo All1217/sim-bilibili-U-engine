@@ -2,7 +2,7 @@
 # @Time : 2026/2/18
 # @Author : Morton
 # @File : qualityTag.py
-# @Project : recommendation-algorithm
+# @Project : algorithm-engine
 
 import sys
 from src.util.jsonHandler import loadJson
@@ -256,24 +256,3 @@ def geneQualityTags(uid, auto_save=True):
         saveToDB(uid, tags)
 
     return tags
-
-
-if __name__ == "__main__":
-    # 从命令行参数获取用户ID
-    if len(sys.argv) > 1:
-        test_uid = int(sys.argv[1])
-    else:
-        # 默认测试用户
-        test_uid = 123123123
-
-    # 构建用户质量画像
-    tags = geneQualityTags(
-        uid=test_uid,
-        auto_save=True
-    )
-
-    if tags:
-        preview = dict(list(tags.items())[:3])
-        print(f"用户 {test_uid} 质量标签: {preview}...")
-    else:
-        print(f"用户 {test_uid} 无质量标签")

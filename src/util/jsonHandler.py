@@ -2,7 +2,7 @@
 # @Time : 2026/2/14 19:24
 # @Author : Morton
 # @File : jsonHandler
-# @Project : recommendation-algorithm
+# @Project : algorithm-engine
 
 import json
 import os

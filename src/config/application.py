@@ -2,7 +2,12 @@
 # @Time : 2025/2/19 19:33
 # @Author : Morton
 # @File : application
-# @Project : recommendation-algorithm
+# @Project : algorithm-engine
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 """
     数据库链接参数
@@ -18,7 +23,9 @@ REDIS_PORT = 6379
 REDIS_HOST = '192.168.150.102'
 REDIS_DB = 4
 REDIS_PASSWORD = '123456'
-
+# elasticsearch
+ES_HOST = '192.168.150.102'
+ES_PORT = 9200
 """
     数据项权重
 """
@@ -55,3 +62,11 @@ RABBIT_USERNAME = 'admin'
 RABBIT_PASS = 'admin123'
 RABBIT_PREFETCH = 10
 RABBIT_MAX_WORKERS = 5
+"""
+    大模型配置
+"""
+DEFAULT_MODEL = "text-embedding-v4"
+MODEL_HOST = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+MODEL_DIMENSION = 1024
+# API key需要自己在环境变量设置：DASHSCOPE_API_KEY=${your_key}
+DASHSCOPE_API_KEY = os.getenv('DASHSCOPE_API_KEY')

@@ -2,7 +2,7 @@
 # @Time : 2026/2/15
 # @Author : Morton
 # @File : wordHandler.py
-# @Project : recommendation-algorithm
+# @Project : algorithm-engine
 
 import jieba
 import jieba.analyse

@@ -22,7 +22,8 @@ client = OpenAI(
 
 completion = client.embeddings.create(
     model="text-embedding-v4",
-    input=input_text
+    input=input_text,
+    dimensions=1024
 )
 vector = completion.data[0].embedding
 doc = {

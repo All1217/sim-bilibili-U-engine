@@ -2,7 +2,7 @@
 # @Time : 2026/2/15 21:27
 # @Author : Morton
 # @File : printStructure.py
-# @Project : recommendation-algorithm
+# @Project : algorithm-engine
 
 import os
 import sys

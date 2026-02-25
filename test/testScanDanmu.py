@@ -2,7 +2,7 @@
 # @Time : 2026/2/13 17:52
 # @Author : Morton
 # @File : testScanDanmu
-# @Project : recommendation-algorithm
+# @Project : algorithm-engine
 # @Theme : 遍历包含弹幕数数据的文本文件，将得到的数据存入数据库
 
 import re

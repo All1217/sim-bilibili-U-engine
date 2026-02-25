@@ -2,7 +2,7 @@
 # @Time : 2026/2/18
 # @Author : Morton
 # @File : profileBuilder.py
-# @Project : recommendation-algorithm
+# @Project : algorithm-engine
 
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -28,18 +28,8 @@ class UserProfileBuilder:
         Args:
             uid: 用户ID
             save_to_db: 是否保存到数据库
-        Returns:
-            {
-                'uid': uid,
-                'interest_tags': {...},
-                'behavior_tags': {...},
-                'quality_tags': {...},
-                'success': bool,
-                'execution_time': float
-            }
         """
         start_time = time.time()
-        # 提交三个任务到线程池
         future_interest = self.executor.submit(self.startInterestModule, uid, False)
         future_behavior = self.executor.submit(self.startBehaviorModule, uid, False)
         future_quality = self.executor.submit(self.startQualityModule, uid, False)
@@ -51,15 +41,12 @@ class UserProfileBuilder:
             'success': False,
             'execution_time': 0
         }
-        # 等待所有任务完成
         try:
-            results['interest_tags'] = future_interest.result(timeout=300)  # 5分钟超时
+            results['interest_tags'] = future_interest.result(timeout=300)
             results['behavior_tags'] = future_behavior.result(timeout=300)
             results['quality_tags'] = future_quality.result(timeout=300)
-            # 检查是否有至少一个模块成功
             if any([results['interest_tags'], results['behavior_tags'], results['quality_tags']]):
                 results['success'] = True
-                # 统一保存到数据库
                 if save_to_db:
                     self.saveToDB(uid, results)
         except Exception as e:
@@ -71,6 +58,7 @@ class UserProfileBuilder:
     def saveToDB(self, uid, results):
         """
         统一保存所有标签到数据库（使用连接池）
+        在保存前进行归一化处理
         """
         # 收集所有标签
         all_tags = {}
@@ -80,23 +68,28 @@ class UserProfileBuilder:
             all_tags.update(results['behavior_tags'])
         if results['quality_tags']:
             all_tags.update(results['quality_tags'])
-
         if not all_tags:
             return
+        # 集中归一化
+        max_weight = max(all_tags.values())
+        if max_weight > 0:
+            normalized_tags = {}
+            for tag, weight in all_tags.items():
+                normalized_tags[tag] = round(weight / max_weight, 4)
+        else:
+            normalized_tags = all_tags
 
         try:
-            # 使用上下文管理器自动处理连接和事务
             with mysql_cursor() as cursor:
                 # 1. 先删除该用户所有旧标签
                 cursor.execute("DELETE FROM user_tag WHERE uid = %s", (uid,))
-                # 2. 批量插入新标签
-                if all_tags:
+                # 2. 批量插入新标签（使用归一化后的权重）
+                if normalized_tags:
                     insert_sql = "INSERT INTO user_tag (uid, tag_name, weight) VALUES (%s, %s, %s)"
-                    values = [(uid, tag, weight) for tag, weight in all_tags.items()]
+                    values = [(uid, tag, weight) for tag, weight in normalized_tags.items()]
                     cursor.executemany(insert_sql, values)
         except Exception as e:
             print(f"❌ 用户 {uid} 标签保存失败: {e}")
-            # 异常时自动回滚
             raise
 
     def startInterestModule(self, uid, save_to_db):
@@ -213,34 +206,3 @@ def batchBuild(uids, save_to_db=True, max_workers=5):
     """
     builder = getInstance()
     return builder.batchBuildOneProfile(uids, save_to_db, max_workers)
-
-
-if __name__ == "__main__":
-    import sys
-
-    print("=" * 60)
-    print("🎯 用户画像构建工具")
-    print("=" * 60)
-
-    if len(sys.argv) > 1:
-        uids = [int(uid) for uid in sys.argv[1].split(',')]
-        print(f"批量构建用户: {uids}")
-        result = batchBuild(uids, save_to_db=True, max_workers=3)
-        print(f"完成: 成功 {result['success']}/{result['total']}, 耗时 {result['execution_time']}秒")
-    else:
-        test_uid = 123123123
-        print(f"构建单个用户: {test_uid}")
-        result = buildOne(test_uid, save_to_db=True)
-        if result['success']:
-            print(f"✅ 成功, 耗时 {result['execution_time']}秒")
-            tag_counts = sum(1 for v in [result['interest_tags'], result['behavior_tags'], result['quality_tags']] if v)
-            print(f"   生成标签模块数: {tag_counts}/3")
-            # 显示各模块标签数量
-            if result['interest_tags']:
-                print(f"   兴趣标签: {len(result['interest_tags'])} 个")
-            if result['behavior_tags']:
-                print(f"   行为标签: {len(result['behavior_tags'])} 个")
-            if result['quality_tags']:
-                print(f"   质量标签: {len(result['quality_tags'])} 个")
-        else:
-            print(f"❌ 失败")

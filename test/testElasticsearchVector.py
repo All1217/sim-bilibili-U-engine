@@ -12,7 +12,7 @@ def generate_sample_vector(dims=768):
     return np.random.randn(dims).tolist()
 
 class VectorElasticsearch:
-    def __init__(self, host="https://localhost:9200"):
+    def __init__(self, host="http://192.168.150.102:9200"):
         self.es = Elasticsearch(
             host,
             verify_certs=False

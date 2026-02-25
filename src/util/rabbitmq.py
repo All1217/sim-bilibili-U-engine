@@ -2,7 +2,7 @@
 # @Time : 2026/2/16
 # @Author : Morton
 # @File : rabbitmq.py
-# @Project : recommendation-algorithm
+# @Project : algorithm-engine
 
 import pika
 import json

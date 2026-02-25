@@ -2,7 +2,7 @@
 # @Time : 2026/2/18
 # @Author : Morton
 # @File : similarUser.py (连接池版)
-# @Project : recommendation-algorithm
+# @Project : algorithm-engine
 
 from src.util.database import mysql_cursor
 import math

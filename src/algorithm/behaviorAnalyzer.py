@@ -2,8 +2,7 @@
 # @Time : 2026/2/18
 # @Author : Morton
 # @File : behaviorAnalyzer.py
-# @Project : recommendation-algorithm
-# TODO: 定期执行analyze保存最新阈值
+# @Project : algorithm-engine
 
 
 from src.util.database import mysql_cursor, get_redis_client
@@ -27,7 +26,6 @@ def analyze(isSave=True):
         "interval_distribution": [],
         "night_owl_analysis": {}
     }
-
     # ==================== 1. 弹幕数量分布 ====================
     with mysql_cursor() as cursor:
         cursor.execute("""
@@ -37,11 +35,8 @@ def analyze(isSave=True):
             GROUP BY uid
         """)
         counts = [row['cnt'] for row in cursor.fetchall()]  # 使用字典游标，通过列名访问
-
         if not counts:
-            print("暂无弹幕数据")
             return result
-
         # 基础统计
         result["danmaku_distribution"] = {
             "total_users": len(counts),
@@ -79,11 +74,9 @@ def analyze(isSave=True):
             GROUP BY uid
             HAVING total >= 10
         """)
-
         night_users = 0
         total_users = 0
         night_ratios = []  # 收集所有夜猫子比例，用于分析
-
         for row in cursor.fetchall():
             total = row['total']
             night_count = row['night_count']
@@ -92,7 +85,6 @@ def analyze(isSave=True):
             night_ratios.append(ratio)
             if ratio >= 0.3:
                 night_users += 1
-
         if total_users > 0:
             result["night_owl_analysis"] = {
                 "qualified_users": total_users,  # 弹幕数≥10条的用户
@@ -101,9 +93,7 @@ def analyze(isSave=True):
                 "avg_night_ratio": round(float(np.mean(night_ratios)), 3) if night_ratios else 0,
                 "median_night_ratio": round(float(np.median(night_ratios)), 3) if night_ratios else 0
             }
-
     # 自动提交和关闭由上下文管理器处理
-
     if isSave:
         saveJson("behaviorAnalysis.json", result)
 
@@ -143,54 +133,34 @@ def recommend():
     """
     res = None
     resDict = {}
-
     try:
         res = loadJson("behaviorAnalysis.json")
     except FileNotFoundError:
         print("读取结果文件发生错误！正在尝试重新分析……")
         res = analyze(True)
-
     print("\n【基于最新分析的阈值建议】")
     if res is None:
-        print("分析结果为空！")
         return
-
     danmaku_dist = res.get('danmaku_distribution', {})
     interval_dist = res.get('interval_distribution', [])
     night_analysis = res.get('night_owl_analysis', {})
-
     # 互动积极分子阈值（取75分位数）
     active_threshold = int(danmaku_dist.get('percentile_75', 50))
-    print(f"  互动积极分子建议阈值（大于等于）：THRESHOLDS['active_threshold'] = {active_threshold}  # 覆盖约25%用户")
     resDict['active_threshold'] = active_threshold
-
     # 潜水观望者阈值（取第一个区间的上限）
     passive_threshold = 5
     if interval_dist and len(interval_dist) > 0:
         passive_percent = interval_dist[0]['percentage']
-        print(
-            f"  潜水观望者建议阈值（小于等于）：THRESHOLDS['passive_threshold'] = {passive_threshold}  # 当前 {passive_percent}% 用户在此区间")
     resDict['passive_threshold'] = passive_percent
-
     # 夜猫子阈值
     if night_analysis:
         night_percent = night_analysis.get('night_owl_percentage', 0)
-        print(
-            f"  夜猫子判定（凌晨(0-5点)弹幕占比 >= ？）：THRESHOLDS['night_ratio_threshold'] = 0.3  # 当前识别出 {night_percent}% 用户")
-        print(f"  夜猫子最小样本数（至少？条弹幕才做判断）：THRESHOLDS['night_min_samples'] = 10      # 至少10条弹幕才判断")
         resDict['night_ratio_threshold'] = night_percent
         resDict['night_min_samples'] = 10
-
     try:
-        print("\n尝试保存建议到JSON……")
         saveJson("recommend.json", resDict)
-        print("保存成功！")
-
-        print("\n尝试保存建议到Redis……")
         redis_client = get_redis_client()
         redis_client.hset(BEHAVIOR_THRESHOLD_KEY, mapping=resDict)
-        print("保存成功！")
-
     except FileNotFoundError:
         print("保存失败！")
     except Exception as e:

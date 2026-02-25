@@ -2,7 +2,7 @@
 # @Time : 2026/2/15
 # @Author : Morton
 # @File : danmuScore.py
-# @Project : recommendation-algorithm
+# @Project : algorithm-engine
 
 from src.util.wordHandler import get_segmenter
 from src.util.jsonHandler import loadJson
