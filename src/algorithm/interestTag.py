@@ -3,13 +3,13 @@
 # @Author : Morton
 # @File : interestTag.py
 # @Project : algorithm-engine
-# TODO: matchTextModel()需要批处理优化！原来都是在本地计算的，引入大模型后每条弹幕、每个视频标签都要发一次网络请求，非常慢
+# TODO: batch_match_text_model不是真正意义上的异步批处理，而是每10条分块。引入官方批处理接口需要对现有系统架构做出较大规模修改，暂时不做
 
 from src.util.wordHandler import get_segmenter
 from src.util.database import mysql_cursor
 from src.util.jsonHandler import loadJson
 from collections import defaultdict
-from typing import List, Dict, Any
+from typing import List, Dict
 from src.algorithm.vectorization import getTagVectorManager
 import datetime
 
@@ -41,46 +41,59 @@ def matchText(text):
     return dict(matches)
 
 
-def matchTextModel(text: str, use_vector: bool = True) -> Dict[str, int]:
+def batch_match_text_model(texts: List[str], use_vector: bool = True) -> List[Dict[str, int]]:
     """
-    标签匹配函数
-    Args:
-        text: 输入文本
-        use_vector: 是否尝试使用向量方法
-    Returns:
-        {tag_name: match_count, ...} 兼容旧格式
+    批量标签匹配函数
     """
-    if not text:
-        return {}
+    if not texts:
+        return []
+    results = [{} for _ in texts]
     if use_vector:
         try:
             manager = getTagVectorManager()
-            similar_tags = manager.search_similar_tags(text, top_k=3)
-            matches = {}
-            for tag, similarity in similar_tags.items():
-                if similarity > 0.5:
-                    matches[tag] = max(1, min(10, int(similarity * 20)))
-            if matches:
-                return matches
+            # 找出需要向量处理的文本（非空）
+            valid_indices = []
+            valid_texts = []
+            for i, text in enumerate(texts):
+                if text and text.strip():
+                    valid_indices.append(i)
+                    valid_texts.append(text)
+            if valid_texts:
+                # 批量向量检索（现在内部会自动分块）
+                batch_results = manager.batch_search_similar_tags(valid_texts, top_k=3)
+                # 将结果放回原位
+                success_count = 0
+                for idx, matches in zip(valid_indices, batch_results):
+                    if matches:  # 如果有匹配结果
+                        converted = {}
+                        for tag, similarity in matches.items():
+                            if similarity > 0.5:
+                                converted[tag] = max(1, min(10, int(similarity * 20)))
+                        results[idx] = converted
+                        success_count += 1
         except Exception as e:
-            print(f"⚠️ 向量匹配失败: {e}，降级到关键词匹配")
-    return matchText(text)
+            print(f"⚠️ 批量向量匹配失败: {e}，降级到关键词匹配")
+            # 出错时降级，但只处理出错的这部分
+            for i, text in enumerate(texts):
+                if text and not results[i]:  # 只处理还没有结果的
+                    try:
+                        results[i] = matchText(text)
+                    except:
+                        pass
+    # 如果 use_vector=False 或向量匹配完全失败，用关键词匹配补齐
+    for i, text in enumerate(texts):
+        if text and not results[i]:
+            results[i] = matchText(text)
+    return results
 
 
 def calInterestTags(uid, use_time_decay=True, normalize=False):
     """
-    计算单个用户的兴趣标签
-    Args:
-        uid: 用户ID
-        use_time_decay: 是否使用时间衰减（推荐True）
-        normalize: 是否归一化权重到[0,1]
-    Returns:
-        {tag_name: weight, ...}
+    计算单个用户的兴趣标签（优化版：批量处理）
     """
     # 初始化权重字典
     weights = {tag: 0 for tag in SEMANTIC_TAGS.keys()}
-
-    # ==================== 1. 从观看视频中提取兴趣 ====================
+    # ==================== 1. 从观看视频中提取兴趣（批量处理）====================
     with mysql_cursor() as cursor:
         cursor.execute("""
             SELECT v.vid, v.tags, uv.play, uv.love, uv.coin, uv.collect, uv.play_time
@@ -89,49 +102,57 @@ def calInterestTags(uid, use_time_decay=True, normalize=False):
             WHERE uv.uid = %s AND v.status = 1
         """, (uid,))
         user_videos = cursor.fetchall()
-
+    # 准备批量处理的视频文本
+    video_texts = []
+    video_metadata = []  # 存储对应的元数据
     for row in user_videos:
         tags_str = row['tags']
-        play = row['play']
-        love = row['love']
-        coin = row['coin']
-        collect = row['collect']
-        play_time = row['play_time']
         if not tags_str or not tags_str.strip():
             continue
-        video_tags = tags_str.strip().split()
-        video_text = " ".join(video_tags)
-        tag_matches = matchTextModel(video_text)
-        if not tag_matches:
-            continue
-        # 计算交互权重
-        interaction_weight = 0
-        if play > 0:
-            interaction_weight += 1
-        if love == 1:
-            interaction_weight += 2
-        if coin > 0:
-            interaction_weight += coin
-        if collect == 1:
-            interaction_weight += 3
-        # 视频源权重系数
-        video_factor = 0.6
-        # 时间衰减（如果启用）
-        time_factor = 1.0
-        if use_time_decay and play_time:
-            days_diff = (datetime.datetime.now() - play_time).days
-            if days_diff <= 30:
-                time_factor = 1.0
-            elif days_diff <= 90:
-                time_factor = 0.8
-            elif days_diff <= 180:
-                time_factor = 0.6
-            else:
-                time_factor = 0.3
-        for tag_name, match_count in tag_matches.items():
-            weights[tag_name] += interaction_weight * match_count * video_factor * time_factor
+        video_text = " ".join(tags_str.strip().split())
+        video_texts.append(video_text)
+        video_metadata.append({
+            'play': row['play'],
+            'love': row['love'],
+            'coin': row['coin'],
+            'collect': row['collect'],
+            'play_time': row['play_time']
+        })
+    # 批量匹配
+    if video_texts:
+        batch_matches = batch_match_text_model(video_texts)
+        # 处理匹配结果
+        for metadata, tag_matches in zip(video_metadata, batch_matches):
+            if not tag_matches:
+                continue
+            # 计算交互权重
+            interaction_weight = 0
+            if metadata['play'] > 0:
+                interaction_weight += 1
+            if metadata['love'] == 1:
+                interaction_weight += 2
+            if metadata['coin'] > 0:
+                interaction_weight += metadata['coin']
+            if metadata['collect'] == 1:
+                interaction_weight += 3
+            # 视频源权重系数
+            video_factor = 0.6
+            # 时间衰减
+            time_factor = 1.0
+            if use_time_decay and metadata['play_time']:
+                days_diff = (datetime.datetime.now() - metadata['play_time']).days
+                if days_diff <= 30:
+                    time_factor = 1.0
+                elif days_diff <= 90:
+                    time_factor = 0.8
+                elif days_diff <= 180:
+                    time_factor = 0.6
+                else:
+                    time_factor = 0.3
 
-    # ==================== 2. 从弹幕中提取兴趣 ====================
+            for tag_name, match_count in tag_matches.items():
+                weights[tag_name] += interaction_weight * match_count * video_factor * time_factor
+    # ==================== 2. 从弹幕中提取兴趣（批量处理）====================
     with mysql_cursor() as cursor:
         cursor.execute("""
             SELECT content, create_date
@@ -139,50 +160,45 @@ def calInterestTags(uid, use_time_decay=True, normalize=False):
             WHERE uid = %s AND status = 1
         """, (uid,))
         danmaku_rows = cursor.fetchall()
-
-    now = datetime.datetime.now()
+    # 准备批量处理的弹幕文本
+    danmaku_texts = []
+    danmaku_dates = []
     for row in danmaku_rows:
         content = row['content']
-        create_date = row['create_date']
-        tag_matches = matchTextModel(content)
-        if not tag_matches:
-            continue
-        time_factor = 1.0
-        if use_time_decay and create_date:
-            days_diff = (now - create_date).days
-            if days_diff <= 30:
-                time_factor = 1.0
-            elif days_diff <= 90:
-                time_factor = 0.8
-            elif days_diff <= 180:
-                time_factor = 0.5
-            else:
-                time_factor = 0.2
-        # 弹幕长度加权
-        length = len(content)
-        if length <= 5:
-            length_factor = 0.5
-        elif length <= 15:
-            length_factor = 1.0
-        else:
-            length_factor = 1.5
-        # 弹幕权重系数
-        danmaku_factor = 1.0
-        for tag_name, match_count in tag_matches.items():
-            weights[tag_name] += match_count * time_factor * length_factor * danmaku_factor
-
+        if content and content.strip():
+            danmaku_texts.append(content)
+            danmaku_dates.append(row['create_date'])
+    now = datetime.datetime.now()
+    # 批量匹配
+    if danmaku_texts:
+        batch_matches = batch_match_text_model(danmaku_texts)
+        # 处理匹配结果
+        for date, tag_matches in zip(danmaku_dates, batch_matches):
+            if not tag_matches:
+                continue
+            # 时间衰减
+            time_factor = 1.0
+            if use_time_decay and date:
+                days_diff = (now - date).days
+                if days_diff <= 30:
+                    time_factor = 1.0
+                elif days_diff <= 90:
+                    time_factor = 0.8
+                elif days_diff <= 180:
+                    time_factor = 0.5
+                else:
+                    time_factor = 0.2
+            for tag_name, match_count in tag_matches.items():
+                weights[tag_name] += match_count * time_factor
     # 过滤掉权重为0的标签
     result = {tag: w for tag, w in weights.items() if w > 0}
-
     if not result:
         return {}
-
     # 归一化
     if normalize:
         max_w = max(result.values())
         if max_w > 0:
             result = {tag: round(w / max_w, 4) for tag, w in result.items()}
-
     return result
 
 
@@ -218,9 +234,7 @@ def geneInterestTags(uid, use_time_decay=True, normalize=False, auto_save=True):
     tags = calInterestTags(uid, use_time_decay, normalize)
     if not tags:
         return {}
-
     # 保存到数据库
     if auto_save:
         saveTags(uid, tags)
-
     return tags

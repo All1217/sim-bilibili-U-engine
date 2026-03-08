@@ -4,10 +4,11 @@
 # @File : vectorization.py
 # @Project : algorithm-engine
 
+import logging
 from typing import List, Dict, Any
 from src.util.database import getES
 from src.util.jsonHandler import loadJson
-from src.util.llmClient import get_embedding_client, embed_text
+from src.util.llmClient import get_embedding_client, embed_text, embed_batch
 
 
 class TagVectorManager:
@@ -124,6 +125,48 @@ class TagVectorManager:
             print(f"❌ 向量检索失败: {e}")
             return {}
 
+    def batch_search_similar_tags(self, texts: List[str], top_k: int = 3) -> List[Dict[str, float]]:
+        """
+        批量搜索多个文本的相似标签（分块）
+        """
+        if not texts:
+            return []
+        try:
+            # 1. 批量向量化所有文本（已在llmClient中分块）
+            text_vectors = embed_batch(texts, text_type="query")
+            # 2. 为每个文本执行向量检索
+            results = []
+            total = len(text_vectors)
+            for idx, vector in enumerate(text_vectors):
+                if vector is None:
+                    results.append({})
+                    continue
+                query = {
+                    "script_score": {
+                        "query": {"match_all": {}},
+                        "script": {
+                            "source": "cosineSimilarity(params.query_vector, 'vector') + 1.0",
+                            "params": {"query_vector": vector}
+                        }
+                    }
+                }
+                result = self.es.search(
+                    index=self.index_name,
+                    body={"query": query, "size": top_k},
+                    _source_includes=["tag_name"]
+                )
+                # 解析结果
+                matches = {}
+                for hit in result['hits']['hits']:
+                    tag_name = hit['_source']['tag_name']
+                    similarity = hit['_score'] - 1.0
+                    matches[tag_name] = round(similarity, 4)
+                results.append(matches)
+            return results
+        except Exception as e:
+            print(f"❌ 批量向量检索失败: {e}")
+            return [{}] * len(texts)
+
     def delete_index(self):
         """删除索引（重置用）"""
         if self.es.indices.exists(index=self.index_name):
@@ -151,19 +194,3 @@ def getTagVectorManager():
     if _tag_vector_manager is None:
         _tag_vector_manager = TagVectorManager()
     return _tag_vector_manager
-
-
-if __name__ == "__main__":
-    manager = getTagVectorManager()
-    # 预计算所有标签
-    print("\n🚀 开始预计算标签向量...")
-    tags_dict = loadJson('tags.json')
-    manager.precompute_all_tags(tags_dict)
-    # 显示统计信息
-    stats = manager.get_index_stats()
-    print(f"\n📊 ES索引统计:")
-    print(f"  - 索引名: {stats['index_name']}")
-    print(f"  - 文档数: {stats['document_count']}")
-    print(f"  - 存储大小: {stats['store_size']} 字节")
-    print(f"  - 健康状态: {stats['health']}")
-    print(f"  - 向量维度: {stats['dimension']}")
