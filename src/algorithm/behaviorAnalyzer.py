@@ -138,7 +138,6 @@ def recommend():
     except FileNotFoundError:
         print("读取结果文件发生错误！正在尝试重新分析……")
         res = analyze(True)
-    print("\n【基于最新分析的阈值建议】")
     if res is None:
         return
     danmaku_dist = res.get('danmaku_distribution', {})

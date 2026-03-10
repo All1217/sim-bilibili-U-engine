@@ -4,11 +4,14 @@
 📄 .gitignore (577.0B)
 📁 Assets/
     📄 behaviorAnalysis.json (1.1KB)
+    📁 docs/
+        📄 备忘录.md (10.4KB)
     📄 professionalWords.json (401.0B)
     📄 qualityThreshold.json (209.0B)
     📄 recommend.json (122.0B)
     📄 stopwords.json (3.6KB)
-    📄 tags.json (3.0KB)
+    📄 tags.json (3.1KB)
+📄 README.md (0.0B)
 📄 printStructure.py (3.4KB)
 📄 project_structure.txt (0.0B)
 📄 requirements.txt (134.0B)
@@ -16,15 +19,15 @@
     📄 __init__.py (127.0B)
     📁 algorithm/
         📄 __init__.py (127.0B)
-        📄 behaviorAnalyzer.py (6.9KB)
+        📄 behaviorAnalyzer.py (6.8KB)
         📄 behaviorTag.py (5.9KB)
         📄 danmuScore.py (3.5KB)
-        📄 interestTag.py (7.3KB)
+        📄 interestTag.py (8.9KB)
         📄 qualityAnalyzer.py (947.0B)
         📄 qualityTag.py (7.6KB)
         📄 recommender.py (3.9KB)
         📄 similarUser.py (4.2KB)
-        📄 vectorization.py (6.5KB)
+        📄 vectorization.py (7.7KB)
     📁 common/
         📄 __init__.py (127.0B)
         📄 qualityTagConstant.py (228.0B)
@@ -35,15 +38,15 @@
     📄 main.py (158.0B)
     📁 server/
         📄 __init__.py (127.0B)
-        📄 app.py (4.1KB)
+        📄 app.py (4.2KB)
     📁 util/
         📄 __init__.py (127.0B)
         📄 database.py (5.5KB)
         📄 jsonHandler.py (872.0B)
-        📄 llmClient.py (6.0KB)
+        📄 llmClient.py (5.4KB)
         📄 profileBuilder.py (7.3KB)
         📄 rabbitmq.py (5.6KB)
-        📄 scheduledJobs.py (1.1KB)
+        📄 scheduledJobs.py (1.3KB)
         📄 spider.py (691.0B)
         📄 wordHandler.py (4.5KB)
 📁 test/

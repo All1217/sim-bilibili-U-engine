@@ -11,7 +11,7 @@ from src.util.database import init_pools
 from src.util.profileBuilder import buildOne
 from src.util.rabbitmq import startRabbitmq, stopRabbitmq
 from src.algorithm.similarUser import startSimilar
-from src.util.scheduledJobs import scheduled_job, refreshBehaviorThreshold
+from src.util.scheduledJobs import scheduled_job, refreshBehaviorThreshold, refreshTagsVector
 import threading
 import src.config.application as config
 import time
@@ -27,6 +27,7 @@ profile_results = {}
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=scheduled_job, trigger="interval", seconds=config.TASK_GAP)
 scheduler.add_job(func=refreshBehaviorThreshold, trigger="interval", seconds=config.TASK_GAP)
+scheduler.add_job(func=refreshTagsVector, trigger="interval", seconds=120)
 scheduler.start()
 print("✅ 定时任务调度器已启动")
 

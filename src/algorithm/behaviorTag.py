@@ -4,7 +4,6 @@
 # @File : behaviorTag.py
 # @Project : algorithm-engine
 
-import sys
 from src.util.database import mysql_cursor, get_redis_client
 from src.common.redisConstants import BEHAVIOR_THRESHOLD_KEY
 from src.util.jsonHandler import loadJson

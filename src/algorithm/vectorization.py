@@ -58,7 +58,7 @@ class TagVectorManager:
             self.es.indices.create(index=self.index_name, body=mapping)
             print(f"✅ 创建索引: {self.index_name} (维度: {self.dimension})")
 
-    def precompute_all_tags(self, tags_dict: Dict[str, List[str]] = None):
+    def preCalTagsVector(self, tags_dict: Dict[str, List[str]] = None):
         """
         预计算所有标签的向量并存入ES
         Args:
@@ -66,7 +66,7 @@ class TagVectorManager:
         """
         if tags_dict is None:
             tags_dict = loadJson('tags.json')
-        print(f"🚀 开始预计算标签向量，共 {len(tags_dict)} 个标签...")
+        # print(f"🚀 开始预计算标签向量，共 {len(tags_dict)} 个标签...")
         for category, keywords in tags_dict.items():
             # 将类别和关键词合并成一段描述文本
             tag_text = f"{category}相关的词汇：{', '.join(keywords[:10])}"
@@ -80,9 +80,10 @@ class TagVectorManager:
                     "vector": vector
                 }
                 self.es.index(index=self.index_name, id=category, body=doc)  # 使用标签名作为文档ID
-                print(f"  ✅ {category} 向量化完成")
+                # print(f"  ✅ {category} 向量化完成")
             except Exception as e:
                 print(f"  ❌ {category} 向量化失败: {e}")
+                logging.exception(e)
         # 刷新索引确保数据可查
         self.es.indices.refresh(index=self.index_name)
         print(f"✅ 所有标签向量化完成，已存入ES索引 {self.index_name}")

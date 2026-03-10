@@ -7,6 +7,7 @@
 from src.util.database import get_redis_client
 from src.util.spider import Spider
 from src.algorithm.behaviorAnalyzer import recommend
+from src.algorithm.vectorization import getTagVectorManager
 import src.config.application as config
 import json
 import time
@@ -36,3 +37,10 @@ def scheduled_job():
 # 定期更新行为标签阈值
 def refreshBehaviorThreshold():
     recommend()
+    print(f"✅ 推荐的行为标签阈值更新成功！")
+
+
+# 定期将标签向量化
+def refreshTagsVector():
+    tgm = getTagVectorManager()
+    tgm.preCalTagsVector()
