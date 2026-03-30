@@ -66,7 +66,6 @@ def calActiveLevel(uid):
     """
     if THRESHOLDS is None:
         return None
-
     with mysql_cursor() as cursor:
         cursor.execute("""
             SELECT COUNT(*) as danmaku_count
@@ -75,7 +74,6 @@ def calActiveLevel(uid):
         """, (uid,))
         result = cursor.fetchone()
         count = result['danmaku_count'] if result else 0
-
     if count >= THRESHOLDS["active_threshold"]:
         return "互动积极分子"
     elif count <= THRESHOLDS["passive_threshold"]:
@@ -115,7 +113,6 @@ def isNightOwl(uid):
 def getOneUserBehaviorTags(uid, include_extended=False):
     """
     获取单个用户的所有行为标签
-
     Args:
         uid: 用户ID
         include_extended: 是否包含扩展标签（点赞狂魔、收藏家）
@@ -178,5 +175,4 @@ def geneBehaviorTags(uid, include_extended=False, auto_save=True):
     # 保存到数据库
     if auto_save:
         saveToDB(uid, tags)
-
     return tags

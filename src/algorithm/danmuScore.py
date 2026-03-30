@@ -94,7 +94,3 @@ def calDanmuScore(danmaku, sender_profile, video_context):
     if any(keyword in video_context.current_frame_keywords for keyword in keywords):
         score += 0.10
     return min(score, 1.0)
-
-
-if __name__ == "__main__":
-    pass

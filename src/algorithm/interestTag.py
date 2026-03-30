@@ -41,7 +41,7 @@ def matchText(text):
     return dict(matches)
 
 
-def batch_match_text_model(texts: List[str], use_vector: bool = True) -> List[Dict[str, int]]:
+def batchMatchText(texts: List[str], use_vector: bool = True) -> List[Dict[str, int]]:
     """
     批量标签匹配函数
     """
@@ -89,11 +89,11 @@ def batch_match_text_model(texts: List[str], use_vector: bool = True) -> List[Di
 
 def calInterestTags(uid, use_time_decay=True, normalize=False):
     """
-    计算单个用户的兴趣标签（优化版：批量处理）
+    计算单个用户的兴趣标签
     """
     # 初始化权重字典
     weights = {tag: 0 for tag in SEMANTIC_TAGS.keys()}
-    # ==================== 1. 从观看视频中提取兴趣（批量处理）====================
+    # ==================== 1. 从观看视频中提取兴趣 ====================
     with mysql_cursor() as cursor:
         cursor.execute("""
             SELECT v.vid, v.tags, uv.play, uv.love, uv.coin, uv.collect, uv.play_time
@@ -120,7 +120,7 @@ def calInterestTags(uid, use_time_decay=True, normalize=False):
         })
     # 批量匹配
     if video_texts:
-        batch_matches = batch_match_text_model(video_texts)
+        batch_matches = batchMatchText(video_texts)
         # 处理匹配结果
         for metadata, tag_matches in zip(video_metadata, batch_matches):
             if not tag_matches:
@@ -136,8 +136,12 @@ def calInterestTags(uid, use_time_decay=True, normalize=False):
             if metadata['collect'] == 1:
                 interaction_weight += 3
             # 视频源权重系数
+            # TODO: 是否需要设置权重？有待商榷
             video_factor = 0.6
             # 时间衰减
+            # TODO: Deepseek宣称这段时间衰减计算代码的依据是Ebbinghaus遗忘曲线理论
+            # Ebbinghaus遗忘曲线（1885）：记忆随时间呈指数衰减，初期衰减快，后期趋缓。
+            #
             time_factor = 1.0
             if use_time_decay and metadata['play_time']:
                 days_diff = (datetime.datetime.now() - metadata['play_time']).days
@@ -149,7 +153,6 @@ def calInterestTags(uid, use_time_decay=True, normalize=False):
                     time_factor = 0.6
                 else:
                     time_factor = 0.3
-
             for tag_name, match_count in tag_matches.items():
                 weights[tag_name] += interaction_weight * match_count * video_factor * time_factor
     # ==================== 2. 从弹幕中提取兴趣（批量处理）====================
@@ -171,7 +174,7 @@ def calInterestTags(uid, use_time_decay=True, normalize=False):
     now = datetime.datetime.now()
     # 批量匹配
     if danmaku_texts:
-        batch_matches = batch_match_text_model(danmaku_texts)
+        batch_matches = batchMatchText(danmaku_texts)
         # 处理匹配结果
         for date, tag_matches in zip(danmaku_dates, batch_matches):
             if not tag_matches:

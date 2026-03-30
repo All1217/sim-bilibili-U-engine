@@ -92,7 +92,6 @@ def buildUserProfileAsync(user_id):
             except Exception as e:
                 profile_results[task_id] = {'status': 'failed', 'error': str(e)}
                 print(f"❌ 异步任务失败 (用户{user_id}): {e}")
-
         # 任务入队
         profile_tasks[task_id] = {'uid': user_id, 'status': 'processing', 'start_time': time.time()}
         thread = threading.Thread(target=background_task)
@@ -108,7 +107,6 @@ def buildUserProfileAsync(user_id):
 def findSimilar(video_id, user_id):
     """
     查找与当前用户相似的用户
-    请求示例: /findSimilar/123/456
     """
     try:
         uids = startSimilar(video_id, user_id, 5)

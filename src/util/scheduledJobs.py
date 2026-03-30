@@ -30,6 +30,7 @@ def scheduled_job():
         res = crawlHotSearch()
         r = get_redis_client()  # 从连接池获取Redis客户端
         r.set("hotSearch", json.dumps(res['data']['trending']))
+        print(f"✅ 成功拉取热搜信息！")
     except Exception as e:
         print(f"❌ 定时任务执行失败: {e}")
 

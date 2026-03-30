@@ -48,7 +48,6 @@ def analyze(isSave=True):
             "percentile_75": round(float(np.percentile(counts, 75)), 1),
             "percentile_25": round(float(np.percentile(counts, 25)), 1)
         }
-
         # ==================== 2. 区间分布 ====================
         bins = [0, 5, 20, 50, 100, 500, 1000, float('inf')]
         labels = ['0-5条', '6-20条', '21-50条', '51-100条', '101-500条', '501-1000条', '1000条以上']
@@ -62,7 +61,6 @@ def analyze(isSave=True):
                 "percentage": percentage
             })
         result["interval_distribution"] = interval_data
-
         # ==================== 3. 夜猫子分析 ====================
         cursor.execute("""
             SELECT 
@@ -96,7 +94,6 @@ def analyze(isSave=True):
     # 自动提交和关闭由上下文管理器处理
     if isSave:
         saveJson("behaviorAnalysis.json", result)
-
     return result
 
 
@@ -157,7 +154,8 @@ def recommend():
         resDict['night_ratio_threshold'] = night_percent
         resDict['night_min_samples'] = 10
     try:
-        saveJson("recommend.json", resDict)
+        # 没必要次次都持久化到json，json仅充当备用数据。新数据一般放到redis
+        # saveJson("recommend.json", resDict)
         redis_client = get_redis_client()
         redis_client.hset(BEHAVIOR_THRESHOLD_KEY, mapping=resDict)
     except FileNotFoundError:
@@ -168,10 +166,10 @@ def recommend():
 
 if __name__ == "__main__":
     # 独立运行时进行分析并保存
-    # result = analyze(isSave=True)
+    result = analyze(isSave=True)
 
     # 打印分析结果
-    # resultPrint(loadJson('behaviorAnalysis.json'))
+    resultPrint(loadJson('behaviorAnalysis.json'))
 
     # 输出并保存阈值建议的代码片段
-    recommend()
+    # recommend()

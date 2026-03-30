@@ -44,7 +44,7 @@ REFERER = "https://www.bilibili.com/"
 """
     定时间隔
 """
-TASK_GAP = 60
+TASK_GAP = 120
 
 """
     本机服务配置

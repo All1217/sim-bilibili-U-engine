@@ -58,22 +58,18 @@ def cosine_similarity(tags1, tags2):
     """
     if not tags1 or not tags2:
         return 0
-
     common_tags = set(tags1.keys()) & set(tags2.keys())
     if not common_tags:
         return 0
-
     dot_product = sum(tags1[tag] * tags2[tag] for tag in common_tags)
     norm1 = math.sqrt(sum(w ** 2 for w in tags1.values()))
     norm2 = math.sqrt(sum(w ** 2 for w in tags2.values()))
-
     if norm1 == 0 or norm2 == 0:
         return 0
-
     return dot_product / (norm1 * norm2)
 
 
-def find_similar_users(target_uid, vid, top_n=10, min_danmaku=1):
+def findSimilarUsers(target_uid, vid, top_n=10, min_danmaku=1):
     """
     查找与目标用户最相似的用户（在当前视频的弹幕发送者中）
 
@@ -89,15 +85,12 @@ def find_similar_users(target_uid, vid, top_n=10, min_danmaku=1):
     target_tags = get_user_tags(target_uid)
     if not target_tags:
         return []
-
     # 2. 获取当前视频的弹幕发送者（排除自己）
     candidate_uids = get_video_danmaku_users(vid, exclude_uid=target_uid, min_danmaku=min_danmaku)
     if not candidate_uids:
         return []
-
     # 3. 批量获取候选用户的标签
     placeholders = ','.join(['%s'] * len(candidate_uids))
-
     with mysql_cursor() as cursor:
         cursor.execute(f"""
             SELECT uid, tag_name, weight
@@ -105,11 +98,9 @@ def find_similar_users(target_uid, vid, top_n=10, min_danmaku=1):
             WHERE uid IN ({placeholders})
         """, candidate_uids)
         rows = cursor.fetchall()
-
     candidate_tags = defaultdict(dict)
     for row in rows:
         candidate_tags[row['uid']][row['tag_name']] = row['weight']
-
     # 4. 计算相似度并排序
     similarities = []
     for uid in candidate_uids:
@@ -118,7 +109,6 @@ def find_similar_users(target_uid, vid, top_n=10, min_danmaku=1):
         sim = cosine_similarity(target_tags, candidate_tags[uid])
         if sim > 0:
             similarities.append((uid, sim))
-
     # 5. 按相似度排序并取前N个
     similarities.sort(key=lambda x: x[1], reverse=True)
     return [uid for uid, _ in similarities[:top_n]]
@@ -136,7 +126,7 @@ def startSimilar(vid, target_uid, limit=5):
     Returns:
         [1001, 1002, 1003, ...]  # 按相似度降序的用户ID列表
     """
-    return find_similar_users(target_uid, vid, top_n=limit, min_danmaku=1)
+    return findSimilarUsers(target_uid, vid, top_n=limit, min_danmaku=1)
 
 
 if __name__ == "__main__":
