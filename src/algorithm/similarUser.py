@@ -117,12 +117,10 @@ def findSimilarUsers(target_uid, vid, top_n=10, min_danmaku=1):
 def startSimilar(vid, target_uid, limit=5):
     """
     获取与目标用户最相似的弹幕发送者用户ID列表
-
     Args:
         vid: 视频ID
         target_uid: 当前用户ID
         limit: 返回数量限制
-
     Returns:
         [1001, 1002, 1003, ...]  # 按相似度降序的用户ID列表
     """
