@@ -5,16 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7b0d85de-7887-4373-ac9b-cbc008e912e5" name="Changes" comment="2026/2/25 删除部分冗余代码">
-      <change afterPath="$PROJECT_DIR$/src/algorithm/vectorization.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/util/llmClient.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/docs/问题日志.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project_structure.txt" beforeDir="false" afterPath="$PROJECT_DIR$/project_structure.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/algorithm/interestTag.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/interestTag.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/config/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/application.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/util/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/util/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/testElasticsearch.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/testElasticsearch.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/testElasticsearchVector.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/testElasticsearchVector.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/testVectorModel.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/testVectorModel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,12 +30,12 @@
     &quot;assignee&quot;: &quot;All1217&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;git@github.com:All1217/simulate-bilibili-recommender.git&quot;,
-    &quot;accountId&quot;: &quot;aaf68fcf-e508-48ac-9dcd-b76ca62afffa&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "git@github.com:All1217/AniLink-AlgorithmEngine.git",
+    "accountId": "aaf68fcf-e508-48ac-9dcd-b76ca62afffa"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>
@@ -86,7 +79,8 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "E:/Program files/python-projects/recommendation-algorithm/Assets/trash",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "E:/Program files/python-projects/AniLink-AlgorithmEngine",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
     "vue.rearranger.settings.migration": "true"
