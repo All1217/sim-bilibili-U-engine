@@ -4,10 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b0d85de-7887-4373-ac9b-cbc008e912e5" name="Changes" comment="2026/2/25 删除部分冗余代码">
-      <change afterPath="$PROJECT_DIR$/Assets/docs/问题日志.md" afterDir="false" />
+    <list default="true" id="7b0d85de-7887-4373-ac9b-cbc008e912e5" name="Changes" comment="2026/4/4 更新文档">
+      <change afterPath="$PROJECT_DIR$/Assets/sql.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/algorithm/uniqueness.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/algorithm/behaviorTag.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/behaviorTag.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/algorithm/danmuScore.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/algorithm/interestTag.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/interestTag.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/algorithm/qualityTag.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithm/qualityTag.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/qualityTagConstant.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/util/profileBuilder.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/util/profileBuilder.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,12 +36,12 @@
     &quot;assignee&quot;: &quot;All1217&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "git@github.com:All1217/AniLink-AlgorithmEngine.git",
-    "accountId": "aaf68fcf-e508-48ac-9dcd-b76ca62afffa"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:All1217/AniLink-AlgorithmEngine.git&quot;,
+    &quot;accountId&quot;: &quot;aaf68fcf-e508-48ac-9dcd-b76ca62afffa&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>
@@ -80,14 +86,15 @@
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "E:/Program files/python-projects/AniLink-AlgorithmEngine",
+    "last_opened_file_path": "E:/Program files/python-projects/AniLink-AlgorithmEngine/Assets",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\Program files\python-projects\AniLink-AlgorithmEngine\Assets" />
       <recent name="E:\Program files\python-projects\recommendation-algorithm\Assets\trash" />
       <recent name="E:\Program files\python-projects\recommendation-algorithm\src" />
     </key>
@@ -238,11 +245,11 @@
     </configuration>
     <list>
       <item itemvalue="Python.main" />
-      <item itemvalue="Python.main (1)" />
-      <item itemvalue="Python.vectorization" />
       <item itemvalue="Python.llmClient" />
+      <item itemvalue="Python.main (1)" />
       <item itemvalue="Python.printStructure" />
       <item itemvalue="Python.testVectorModel" />
+      <item itemvalue="Python.vectorization" />
     </list>
     <recent_temporary>
       <list>
@@ -327,7 +334,15 @@
       <option name="project" value="LOCAL" />
       <updated>1771994623434</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="2026/4/4 更新文档">
+      <option name="closed" value="true" />
+      <created>1775297511574</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1775297511574</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -349,6 +364,7 @@
     <MESSAGE value="2026/2/16 修改了初始化Rabbitmq的代码" />
     <MESSAGE value="2026/2/18 进一步优化代码，引入数据库连接池；简化了冗余代码；完善了阈值配置" />
     <MESSAGE value="2026/2/25 删除部分冗余代码" />
-    <option name="LAST_COMMIT_MESSAGE" value="2026/2/25 删除部分冗余代码" />
+    <MESSAGE value="2026/4/4 更新文档" />
+    <option name="LAST_COMMIT_MESSAGE" value="2026/4/4 更新文档" />
   </component>
 </project>
